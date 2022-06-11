@@ -34,7 +34,8 @@
                 </li>
                 <li class="nav-header">MASTER</li>
                 <li class="nav-item">
-                    <a href="" class="nav-link {{ request()->is('category*') ? 'active' : '' }}">
+                    <a href="{{ route('kategori.index') }}"
+                        class="nav-link {{ request()->is('category*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-cube"></i>
                         <p>
                             Kategori
