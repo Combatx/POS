@@ -22,9 +22,15 @@ class ProdukController extends Controller
         return view('produk.index', compact('kategori', 'satuan'));
     }
 
-    public function data()
+    public function data(Request $request)
     {
-        $query = Produk::with('kategori', 'satuan')->select('produk.*')->orderBy('id_produk', 'desc')->get();
+        $query = Produk::with('kategori', 'satuan')->select('produk.*')->orderBy('id_produk', 'desc')
+            ->when(request()->has('kategori') && $request->kategori != "", function ($query) use ($request) {
+                $query->where('id_kategori', $request->kategori);
+            })
+            ->when(request()->has('satuan') && $request->satuan != "", function ($query) use ($request) {
+                $query->where('id_satuan', $request->satuan);
+            });
 
         return datatables($query)
             ->addIndexColumn()

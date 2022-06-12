@@ -11,6 +11,30 @@
     <div class="row">
         <div class="col-lg-12">
             <x-card>
+
+                <div class="d-flex justify-content-start mb-3">
+                    <div class="form-grop ml-2">
+                        <div class="row">
+                            <label for="kategori2">Kategori</label>
+                            <select name="kategori2" id="kategori2" class="custom-select">
+                                <option disabled selected>Pilih Salah Satu</option>
+                                @foreach ($kategori as $key => $item)
+                                    <option value="{{ $key }}"> {{ $item }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grop ml-5">
+                        <label for="satuan2">Satuan</label>
+                        <select name="satuan2" id="satuan2" class="custom-select">
+                            <option disabled selected>Pilih Salah Satu</option>
+                            @foreach ($satuan as $key => $item)
+                                <option value="{{ $key }}"> {{ $item }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
                 <x-slot name="header">
                     <button onclick="addForm(`{{ route('produk.store') }}`)" class="btn btn-primary"><i
                             class="fas fa-plus-circle"></i> Tambah</button>
@@ -48,6 +72,10 @@
             autoWidth: false,
             ajax: {
                 url: '{{ route('produk.data') }}',
+                data: function(d) {
+                    d.kategori = $('[name=kategori2]').val();
+                    d.satuan = $('[name=satuan2]').val();
+                },
             },
             columns: [{
                     data: 'DT_RowIndex',
@@ -84,6 +112,14 @@
                     sortable: false,
                 },
             ]
+        });
+
+        $('[name=kategori2]').on('change', function() {
+            table.ajax.reload();
+        });
+
+        $('[name=satuan2]').on('change', function() {
+            table.ajax.reload();
         });
 
         function addForm(url, title = 'Tambah') {
