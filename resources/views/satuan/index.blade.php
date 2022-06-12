@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Kategori')
+@section('title', 'Satuan')
 
 @section('breadcrumb')
     @parent
-    <li class="breadcrumb-item"><a href="#">Kategori</a></li>
+    <li class="breadcrumb-item"><a href="#">Satuan</a></li>
 @endsection
 
 @section('content')
@@ -12,20 +12,20 @@
         <div class="col-lg-12">
             <x-card>
                 <x-slot name="header">
-                    <button onclick="addForm(`{{ route('kategori.store') }}`)" class="btn btn-primary"><i
+                    <button onclick="addForm(`{{ route('satuan.store') }}`)" class="btn btn-primary"><i
                             class="fas fa-plus-circle"></i> Tambah</button>
                 </x-slot>
                 <x-table>
                     <x-slot name="thead">
                         <th width="10%">No</th>
-                        <th>Nama Kategori</th>
+                        <th>Nama Satuan</th>
                         <th width="20%"><i class="fas fa-cog"></i></th>
                     </x-slot>
                 </x-table>
             </x-card>
         </div>
     </div>
-    @includeIf('kategori.form')
+    @includeIf('satuan.form')
 
 @endsection
 
@@ -40,7 +40,7 @@
             processing: true,
             autoWidth: false,
             ajax: {
-                url: '{{ route('kategori.data') }}',
+                url: '{{ route('satuan.data') }}',
             },
             columns: [{
                     data: 'DT_RowIndex',

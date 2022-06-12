@@ -35,7 +35,7 @@
                 <li class="nav-header">MASTER</li>
                 <li class="nav-item">
                     <a href="{{ route('kategori.index') }}"
-                        class="nav-link {{ request()->is('category*') ? 'active' : '' }}">
+                        class="nav-link {{ request()->is('kategori*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-cube"></i>
                         <p>
                             Kategori
@@ -43,7 +43,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="" class="nav-link {{ request()->is('status*') ? 'active' : '' }}">
+                    <a href="{{ route('satuan.index') }}"
+                        class="nav-link {{ request()->is('satuan*') ? 'active' : '' }}">
                         <i class="fas fa-balance-scale"></i>
                         <p>
                             Satuan

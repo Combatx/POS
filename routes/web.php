@@ -3,6 +3,7 @@
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\SatuanController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,4 +29,7 @@ Route::group([
 
     Route::get('/kategori/data', [KategoriController::class, 'data'])->name('kategori.data');
     Route::resource('/kategori', KategoriController::class);
+
+    Route::get('/satuan/data', [SatuanController::class, 'data'])->name('satuan.data');
+    Route::resource('/satuan', SatuanController::class);
 });
