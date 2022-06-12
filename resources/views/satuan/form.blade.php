@@ -10,7 +10,7 @@
         <div class="col-lg-12">
             <div class="form-group">
                 <label for="nama">Nama Satuan</label>
-                <input type="text" name="nama" id="nama" class="form-control">
+                <input type="text" name="nama" id="nama" class="form-control" required>
             </div>
         </div>
     </div>

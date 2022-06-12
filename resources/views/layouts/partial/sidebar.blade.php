@@ -60,7 +60,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="" class="nav-link {{ request()->is('supplier*') ? 'active' : '' }}">
+                    <a href="{{ route('supplier.index') }}"
+                        class="nav-link {{ request()->is('supplier*') ? 'active' : '' }}">
                         <i class="fas fa-truck"></i>
                         <p>
                             Supplier
