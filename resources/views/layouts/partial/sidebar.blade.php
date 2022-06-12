@@ -52,7 +52,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="" class="nav-link {{ request()->is('produk*') ? 'active' : '' }}">
+                    <a href="{{ route('produk.index') }}"
+                        class="nav-link {{ request()->is('produk*') ? 'active' : '' }}">
                         <i class="fas fa-boxes"></i>
                         <p>
                             Produk

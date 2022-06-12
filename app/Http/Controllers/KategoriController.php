@@ -120,6 +120,6 @@ class KategoriController extends Controller
     public function destroy(Kategori $kategori)
     {
         $kategori->delete();
-        return response()->json(['data' => null, 'message' => 'Kategori Berhasil dihapus!']);;
+        return response()->json(['data' => null, 'message' => 'Kategori Berhasil dihapus!']);
     }
 }

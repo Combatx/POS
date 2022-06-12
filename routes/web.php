@@ -3,6 +3,7 @@
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\SupplierController;
 use Illuminate\Support\Facades\Route;
@@ -36,4 +37,7 @@ Route::group([
 
     Route::get('/supplier/data', [SupplierController::class, 'data'])->name('supplier.data');
     Route::resource('/supplier', SupplierController::class);
+
+    Route::get('/produk/data', [ProdukController::class, 'data'])->name('produk.data');
+    Route::resource('/produk', ProdukController::class);
 });
