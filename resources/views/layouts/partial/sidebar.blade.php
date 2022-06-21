@@ -22,7 +22,8 @@
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                data-accordion="false">
                 <li class="nav-item">
                     <a href="{{ route('dashboard.index') }}"
                         class="nav-link {{ request()->is('/*') ? 'active' : '' }}">
@@ -79,7 +80,8 @@
                 </li>
                 <li class="nav-header">Transaksi</li>
                 <li class="nav-item">
-                    <a href="" class="nav-link {{ request()->is('pembelian*') ? 'active' : '' }}">
+                    <a href="{{ route('pembelian.index') }}"
+                        class="nav-link {{ request()->is('pembelian*') ? 'active' : '' }}">
                         <i class="fas fa-cart-arrow-down"></i>
                         <p>
                             Pembelian

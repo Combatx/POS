@@ -17,9 +17,9 @@ class CreatePembelianDetailTable extends Migration
             $table->increments('id_pembelian_detail');
             $table->unsignedInteger('id_pembelian');
             $table->unsignedInteger('id_produk');
-            $table->integer('harga');
+            $table->integer('harga_beli');
             $table->integer('jumlah');
-            $table->integer('sub_total');
+            $table->integer('subtotal');
             $table->timestamps();
         });
     }

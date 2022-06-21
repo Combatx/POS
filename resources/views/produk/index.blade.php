@@ -13,7 +13,7 @@
             <x-card>
 
                 <div class="d-flex justify-content-start mb-3">
-                    <div class="form-grop ml-2">
+                    <div class="form-group ml-2">
                         <div class="row">
                             <label for="kategori2">Kategori</label>
                             <select name="kategori2" id="kategori2" class="custom-select">
@@ -24,7 +24,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-grop ml-5">
+                    <div class="form-group ml-5">
                         <label for="satuan2">Satuan</label>
                         <select name="satuan2" id="satuan2" class="custom-select">
                             <option disabled selected>Pilih Salah Satu</option>
