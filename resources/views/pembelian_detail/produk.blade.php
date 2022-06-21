@@ -13,11 +13,11 @@
         @foreach ($produk as $key => $item)
             <tr>
                 <td width="5%">{{ $key + 1 }}</td>
-                <td><span class="label label-success">{{ $item->kode_barang }}</span></td>
+                <td><span class="badge badge-primary">{{ $item->kode_barang }}</span></td>
                 <td>{{ $item->nama_barang }}</td>
                 <td>{{ $item->harga_beli }}</td>
                 <td>
-                    <a href="#" class="btn btn-primary btn-xs btn-flat"
+                    <a href="#" class="btn btn-primary btn-xs"
                         onclick="pilihProduk('{{ $item->id_produk }}', '{{ $item->kode_barang }}')">
                         <i class="fa fa-check-circle">
                             Pilih
