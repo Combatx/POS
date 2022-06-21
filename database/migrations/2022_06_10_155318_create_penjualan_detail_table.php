@@ -18,9 +18,10 @@ class CreatePenjualanDetailTable extends Migration
             $table->unsignedInteger('id_penjualan');
             $table->unsignedInteger('id_produk');
             $table->unsignedInteger('id_pengiriman');
-            $table->integer('harga');
+            $table->integer('harga_jual');
             $table->integer('jumlah');
             $table->integer('diskon');
+            $table->integer('subtotal');
             $table->enum('dikirim', ['ya', 'tidak']);
             $table->timestamps();
         });

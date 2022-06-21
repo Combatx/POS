@@ -21,7 +21,8 @@ class CreatePenjualanTable extends Migration
             $table->integer('total_harga');
             $table->integer('diskon');
             $table->integer('bayar');
-            $table->integer('diterima');
+            $table->integer('diterima')
+                ->default(0);
             $table->timestamps();
         });
     }

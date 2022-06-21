@@ -89,18 +89,29 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="" class="nav-link {{ request()->is('penjualan*') ? 'active' : '' }}">
+                    <a href="{{ route('penjualan.index') }}"
+                        class="nav-link {{ request()->is('penjualan*') ? 'active' : '' }}">
                         <i class="fas fa-store"></i>
                         <p>
-                            Penjualan
+                            Daftar Penjualan
                         </p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="" class="nav-link {{ request()->is('transaksi-pembelian*') ? 'active' : '' }}">
+                    <a href="{{ route('transaksi.index') }}"
+                        class="nav-link {{ request()->is('transaksi.index') ? 'active' : '' }}">
+                        <i class="fas fa-calculator"></i>
+                        <p>
+                            Transaksi Aktif
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('transaksi.baru') }}"
+                        class="nav-link {{ request()->is('transaksi/baru') ? 'active' : '' }} {{ request()->is('transaksi/selesai') ? 'active' : '' }}">
                         <i class="fas fa-cash-register"></i>
                         <p>
-                            Penjualan
+                            Transaksi Baru
                         </p>
                     </a>
                 </li>
