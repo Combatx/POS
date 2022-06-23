@@ -102,12 +102,14 @@ class PenjualanController extends Controller
 
     public function store(Request $request)
     {
+        $diskon = str_replace('.', '', $request->diskon);
+        $diterima = str_replace('.', '', $request->diterima);
         $penjualan = Penjualan::findOrFail($request->id_penjualan);
         $penjualan->total_item = $request->total_item;
         $penjualan->total_harga = $request->total;
-        $penjualan->diskon = $request->diskon;
+        $penjualan->diskon = $diskon;
         $penjualan->bayar = $request->bayar;
-        $penjualan->diterima = $request->diterima;
+        $penjualan->diterima = $diterima;
         $penjualan->update();
 
         $detail = PenjualanDetail::where('id_penjualan', $penjualan->id_penjualan)->get();

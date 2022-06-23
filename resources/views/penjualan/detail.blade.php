@@ -1,4 +1,4 @@
-<x-modal id="modal-detail" aria-labelledby="modal-detail">
+<x-modal size="modal-lg" id="modal-detail" aria-labelledby="modal-detail">
     <x-slot name="title">Detail Pembelian</x-slot>
     <x-table class="table-detail">
         <x-slot name="thead">

@@ -61,12 +61,16 @@
 @endsection
 
 @includeIf('includes.datatables')
+@includeIf('includes.jquery-mask')
 
 @push('script')
     <script>
         let modal = '#modal-form';
         let table;
 
+        $(document).ready(function() {
+            inputMask();
+        });
         table = $('.table').DataTable({
             processing: true,
             autoWidth: false,
@@ -113,6 +117,19 @@
                 },
             ]
         });
+
+
+        function inputMask() {
+            $('#harga_beli').mask('#.##0', {
+                reverse: true
+            });
+            $('#harga_jual').mask('#.##0', {
+                reverse: true
+            });
+            $('#diskon').mask('#.##0', {
+                reverse: true
+            });
+        }
 
         $('[name=kategori2]').on('change', function() {
             table.ajax.reload();
@@ -197,7 +214,7 @@
         function loopForm(originalForm) {
             for (field in originalForm) {
                 if ($(`[name=${field}]`).attr('type') != 'file') {
-                    $(`[name=${field}]`).val(originalForm[field]);
+                    $(`[name=${field}]`).val(originalForm[field]).trigger('input');
                 }
             }
         }

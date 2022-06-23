@@ -120,9 +120,9 @@
 
                             <table class="table table-striped table-cekstok">
                                 <thead class="bg-dark">
-                                    <th>No</th>
+                                    <th width="10%">No</th>
                                     <th>Nama Barang</th>
-                                    <th>Stok</th>
+                                    <th width="20%">Stok</th>
                                 </thead>
                             </table>
                         </div>
@@ -155,7 +155,7 @@
                 processing: true,
                 autoWidth: false,
                 "order": [
-                    [2, "asc"]
+                    [0, "asc"]
                 ],
                 ajax: {
                     url: '{{ route('dashboard.cekstok') }}',

@@ -48,7 +48,7 @@
                 processing: true,
                 autoWidth: false,
                 "order": [
-                    [2, "asc"]
+                    [0, "asc"]
                 ],
                 ajax: {
                     url: '{{ route('pembelian.data') }}',

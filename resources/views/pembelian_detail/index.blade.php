@@ -113,14 +113,14 @@
                             <div class="form-group row">
                                 <label for="diskon" class="col-lg-2 control-label">Diskon</label>
                                 <div class="col-lg-8">
-                                    <input type="number" name="diskon" id="diskon" class="form-control"
+                                    <input type="text" name="diskon" id="diskon" class="form-control"
                                         value="{{ $diskon }}">
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="bayar" class="col-lg-2 control-label">Bayar</label>
                                 <div class="col-lg-8">
-                                    <input type="text" id="bayarrp" class="form-control">
+                                    <input type="text" id="bayarrp" class="form-control" readonly>
                                 </div>
                             </div>
                         </form>
@@ -138,6 +138,7 @@
 @endsection
 
 @includeIf('includes.datatables')
+@includeIf('includes.jquery-mask')
 
 @push('script')
     <script>
@@ -182,7 +183,7 @@
                     bSort: false,
                 })
                 .on('draw.dt', function() {
-                    loadForm($('#diskon').val());
+                    loadForm($('#diskon').cleanVal());
                 });
 
             table2 = $('.table-produk').DataTable();
@@ -209,7 +210,7 @@
                     })
                     .done(response => {
                         $(this).on('mouseout', function() {
-                            table.ajax.reload(() => loadForm($('#diskon').val()));
+                            table.ajax.reload(() => loadForm($('#diskon').cleanVal()));
                         })
                     }).fail(errors => {
                         alert('Tidak dapat menyimpan data?');
@@ -221,14 +222,21 @@
                 if ($(this).val() == "") {
                     $(this).val().select();
                 }
-
-                loadForm($(this).val());
+                loadForm($(this).cleanVal());
             });
 
             $('.btn-simpan').on('click', function() {
                 $('.form-pembelian').submit();
             })
+
+            inputMask();
         });
+
+        function inputMask() {
+            $('#diskon').mask('#.##0', {
+                reverse: true
+            });
+        }
 
         function tampilProduk(url) {
             $('#modal-produk').modal('show');
@@ -249,7 +257,7 @@
             $.post('{{ route('pembelian_detail.store') }}', $('.form-produk').serialize())
                 .done(response => {
                     $('#kode_barang').focus();
-                    table.ajax.reload(() => loadForm($('#diskon').val()));
+                    table.ajax.reload(() => loadForm($('#diskon').cleanVal()));
                 })
                 .fail(errors => {
                     alert('Tidak dapat menyimpan data');
@@ -265,7 +273,7 @@
                         '_method': 'delete'
                     })
                     .done((response) => {
-                        table.ajax.reload(() => loadForm($('#diskon').val()));
+                        table.ajax.reload(() => loadForm($('#diskon').cleanVal()));
                     })
                     .fail((errors) => {
                         alert('Tidak dapat menyimpan data');

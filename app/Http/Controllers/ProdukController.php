@@ -126,12 +126,13 @@ class ProdukController extends Controller
      */
     public function update(Request $request, Produk $produk)
     {
+
         $validator = Validator::make($request->all(), [
             'kode_barang' => 'required|min:2|unique:produk,kode_barang,' . $produk->id_produk . ',id_produk',
             'nama_barang' => 'required|min:2|unique:produk,nama_barang,' . $produk->id_produk . ',id_produk',
-            'harga_beli' => 'required|min:2|numeric',
-            'harga_jual' => 'required|min:2|numeric',
-            'id_kategori' => 'required||numeric',
+            'harga_beli' => 'required|min:1|numeric',
+            'harga_jual' => 'required|min:1|numeric',
+            'id_kategori' => 'required|numeric',
             'id_satuan' => 'required|numeric',
         ]);
 
@@ -141,6 +142,9 @@ class ProdukController extends Controller
         }
 
         $data = $request->all();
+        $data['harga_beli'] = str_replace('.', '', $data['harga_beli']);
+        $data['harga_jual'] = str_replace('.', '', $data['harga_jual']);
+        $data['diskon'] = str_replace('.', '', $data['diskon']);
 
         $produk->update($data);
         return response()->json(['data' => $produk, 'message' => 'Produk berhasil diedit!']);

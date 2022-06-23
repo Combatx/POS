@@ -72,10 +72,11 @@ class PembelianController extends Controller
 
     public function store(Request $request)
     {
+        $diskon = str_replace('.', '', $request->diskon);
         $pembelian = Pembelian::findOrFail($request->id_pembelian);
         $pembelian->total_item = $request->total_item;
         $pembelian->total_harga = $request->total;
-        $pembelian->diskon = $request->diskon;
+        $pembelian->diskon = $diskon;
         $pembelian->bayar = $request->bayar;
         $pembelian->update();
 

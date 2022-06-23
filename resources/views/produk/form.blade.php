@@ -36,15 +36,15 @@
             </div>
             <div class="form-group">
                 <label for="harga_beli">Harga Beli</label>
-                <input type="number" name="harga_beli" id="harga_beli" class="form-control" required>
+                <input type="text" name="harga_beli" id="harga_beli" class="form-control" required>
             </div>
             <div class="form-group">
                 <label for="harga_jual">Harga Jual</label>
-                <input type="number" name="harga_jual" id="harga_jual" class="form-control" required>
+                <input type="text" name="harga_jual" id="harga_jual" class="form-control" required>
             </div>
             <div class="form-group">
                 <label for="diskon">Diskon</label>
-                <input type="number" name="diskon" id="diskon" class="form-control">
+                <input type="diskon" name="diskon" id="diskon" class="form-control">
             </div>
         </div>
 

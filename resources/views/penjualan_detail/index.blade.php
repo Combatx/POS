@@ -66,7 +66,7 @@
                         <th>Nama</th>
                         <th>Harga</th>
                         <th width="15%">Jumlah</th>
-                        <th>Diskon</th>
+                        {{-- <th>Diskon</th> --}}
                         <th>Sub Total</th>
                         <th width="15%"><i class="fa fa-cog"></i></th>
                     </x-slot>
@@ -96,7 +96,8 @@
                             <div class="form-group row">
                                 <label for="diskon" class="col-lg-2 control-label">Diskon</label>
                                 <div class="col-lg-8">
-                                    <input type="number" name="diskon" id="diskon" class="form-control" value="0">
+                                    <input type="text" name="diskon" id="diskon" class="form-control"
+                                        value="{{ $penjualan->diskon ?? 0 }}">
                                 </div>
                             </div>
                             <div class="form-group row">
@@ -136,6 +137,8 @@
 
 
 @includeIf('includes.datatables')
+@includeIf('includes.jquery-mask')
+
 @push('script')
     <script>
         let table, table2;
@@ -181,7 +184,7 @@
                     bSort: false,
                 })
                 .on('draw.dt', function() {
-                    loadForm($('#diskon').val());
+                    loadForm($('#diskon').cleanVal());
                     setTimeout(() => {
                         $('#diterima').trigger('input');
                     }, 300);
@@ -212,7 +215,8 @@
                     })
                     .done(response => {
                         $(this).on('mouseout', function() {
-                            table.ajax.reload(() => loadForm($('#diskon').val()));
+                            table.ajax.reload(() => loadForm($('#diskon').cleanVal(), $(
+                                '#diterima').cleanVal()));
                         })
                     }).fail(errors => {
                         alert('Tidak dapat menyimpan data?');
@@ -226,26 +230,34 @@
 
                 }
 
-                loadForm($(this).val());
+                loadForm($(this).cleanVal());
             });
 
             $('.btn-simpan').on('click', function() {
-                if ($('#diterima').val() < $('#bayar').val()) {
+                if (parseInt($('#diterima').cleanVal()) < $('#bayar').val()) {
                     alert('Pembayaran kurang');
                     return;
                 }
                 $('.form-penjualan').submit();
             })
-
-
+            inputMask();
         });
+
+        function inputMask() {
+            $('#diskon').mask('#.##0', {
+                reverse: true
+            });
+            $('#diterima').mask('#.##0', {
+                reverse: true
+            });
+        }
 
         $('#diterima').on('input', function() {
             if ($(this).val() == "") {
                 $(this).val().select();
             }
 
-            loadForm($('#diskon').val(), $(this).val());
+            loadForm($('#diskon').cleanVal(), $(this).cleanVal());
         }).focus(function() {
             $(this).select();
         });
@@ -271,7 +283,7 @@
             $.post('{{ route('transaksi.store') }}', $('.form-produk').serialize())
                 .done(response => {
                     $('#kode_produk').focus();
-                    table.ajax.reload(() => loadForm($('#diskon').val()));
+                    table.ajax.reload(() => loadForm($('#diskon').cleanVal()));
                 })
                 .fail(errors => {
                     alert('Tidak dapat menyimpan data');
@@ -307,7 +319,7 @@
                         '_method': 'delete'
                     })
                     .done((response) => {
-                        table.ajax.reload(() => loadForm($('#diskon').val()));
+                        table.ajax.reload(() => loadForm($('#diskon').cleanVal()));
                     })
                     .fail((errors) => {
                         alert('Tidak dapat menyimpan data');
@@ -329,7 +341,7 @@
                     $('.tampil-terbilang').text(response.terbilang);
 
                     $('#kembali').val('Rp.' + response.kembalirp);
-                    if ($('#diterima').val() != 0) {
+                    if ($('#diterima').cleanVal() != 0) {
                         $('.tampil-bayar').text('Kembali Rp. ' + response.kembalirp);
                         $('.tampil-terbilang').text(response.kembali_terbilang);
                     }
