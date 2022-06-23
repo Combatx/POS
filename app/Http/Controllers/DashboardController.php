@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Produk;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -13,7 +14,21 @@ class DashboardController extends Controller
      */
     public function index()
     {
+
         return view('dashboard.index');
+    }
+
+    public function cekstok()
+    {
+        $produk = Produk::where('stok', '<=', 10)->limit(30)->get();
+        // return $produk->user->name;
+        return datatables()
+            ->of($produk)
+            ->addIndexColumn()
+            ->addColumn('stok', function ($produk) {
+                return format_uang($produk->stok);
+            })
+            ->make(true);
     }
 
     /**

@@ -52,9 +52,11 @@ class SupplierController extends Controller
      */
     public function store(Request $request)
     {
+
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|min:2',
+            'nama' => 'required|min:2|unique:supplier,nama',
             'alamat' => 'required|min:2',
+            'telepon' => 'min:2|numeric',
         ]);
 
         if ($validator->fails()) {
@@ -98,9 +100,12 @@ class SupplierController extends Controller
     public function update(Request $request, Supplier $supplier)
     {
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|min:2',
+            'nama' => 'required|min:2|unique:supplier,nama,' . $supplier->id_supplier . ',id_supplier',
             'alamat' => 'required|min:2',
+            'telepon' => 'min:2|numeric',
         ]);
+
+
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);

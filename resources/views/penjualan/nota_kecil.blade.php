@@ -55,7 +55,12 @@
         ';
     @endphp
 
-
+    <style>
+        .between {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
 
     {!! $style !!}
 </head>
@@ -67,13 +72,21 @@
         <p>{{ strtoupper($setting->alamat) }}</p>
     </div>
     <br>
-    <div>
-        <p style="float: left;">{{ date('d-m-Y') }}</p>
-        <p style="float: right;">{{ strtoupper(auth()->user()->name) }}</p>
+
+    <div class="row">
+        <div style="" class="col-lg-6 between">
+            <p style="">{{ $tanggal }}</p>
+            <p style="">{{ $jam }}</p>
+
+        </div>
+        <div class="col-lg-6 between">
+            <p style="">No: {{ tambah_nol_didepan($penjualan->id_penjualan, 10) }}</p>
+            <p style="">{{ strtoupper(auth()->user()->name) }}</p>
+        </div>
     </div>
 
     <div class="clear-both" style="clear: both;"></div>
-    <p style="margin: 0;">No: {{ tambah_nol_didepan($penjualan->id_penjualan, 10) }}</p>
+
     <p style="margin: 0;" class="text-center">===================================</p>
 
     <table width="100%" style="border: 0;">

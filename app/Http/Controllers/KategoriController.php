@@ -98,7 +98,7 @@ class KategoriController extends Controller
     public function update(Request $request, Kategori $kategori)
     {
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|min:2|unique:kategori,nama'
+            'nama' => 'required|min:2|unique:kategori,nama,' . $kategori->id_kategori . ',id_kategori',
         ]);
 
         if ($validator->fails()) {

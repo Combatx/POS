@@ -104,7 +104,37 @@
                             <canvas id="sales-chart-canvas" height="300" style="height: 300px;"></canvas>
                         </div>
                     </div>
+
                 </div><!-- /.card-body -->
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between mb-3">
+                                <h3>Stok Kurang Dari 11</h3>
+                                <button onclick="refreshstok()"
+                                    style="border: 0; text-decoration: none; background: none;"><i
+                                        class="fas fa-sync"></i></button>
+                            </div>
+
+                            <table class="table table-striped table-cekstok">
+                                <thead class="bg-dark">
+                                    <th>No</th>
+                                    <th>Nama Barang</th>
+                                    <th>Stok</th>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>TOP Penjualan Bulan Ini</h3>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- /.card -->
         </section>
@@ -113,7 +143,43 @@
     <!-- /.row (main row) -->
 @endsection
 
+@includeIf('includes.datatables')
+
+
+
 @push('script')
+    <script>
+        let table1;
+        $(function() {
+            table1 = $('.table-cekstok').DataTable({
+                processing: true,
+                autoWidth: false,
+                "order": [
+                    [2, "asc"]
+                ],
+                ajax: {
+                    url: '{{ route('dashboard.cekstok') }}',
+                },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        searchable: false,
+                    },
+
+                    {
+                        data: 'nama_barang',
+                    },
+                    {
+                        data: 'stok',
+                    },
+                ]
+            })
+        });
+
+        function refreshstok() {
+            table1.ajax.reload();
+        }
+    </script>
+
     <!-- AdminLTE for demo purposes -->
     <script src="{{ asset('AdminLTE/dist/js/demo.js') }}"></script>
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->

@@ -81,7 +81,7 @@
             </tr>
             <tr>
                 <td colspan="6" class="text-right"><b>Diskon</b></td>
-                <td class="text-right"><b>{{ $penjualan->total_harga }} % </b></td>
+                <td class="text-right"><b>{{ format_uang($penjualan->diskon) }} </b></td>
             </tr>
             <tr>
                 <td colspan="6" class="text-right"><b>Total Harga</b></td>
@@ -98,10 +98,11 @@
         </tfoot>
     </table>
 
-    <table width="100%">
+    <table width="100%" style="margin-top: 33px;">
         <tr>
             <td><b>Terima Kasih telah berbelanja dan sampai jumpa</b></td>
-            <td class="text-center">Kasir
+            <td style="" class="text-center">Kasir
+                <br>
                 <br>
                 <br>
                 {{ auth()->user()->name }}

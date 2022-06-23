@@ -127,11 +127,14 @@ class ProdukController extends Controller
     public function update(Request $request, Produk $produk)
     {
         $validator = Validator::make($request->all(), [
-            'kode_barang' => 'required|min:2|unique:produk,kode_barang',
-            'nama_barang' => 'required|min:2|unique:produk,nama_barang',
+            'kode_barang' => 'required|min:2|unique:produk,kode_barang,' . $produk->id_produk . ',id_produk',
+            'nama_barang' => 'required|min:2|unique:produk,nama_barang,' . $produk->id_produk . ',id_produk',
             'harga_beli' => 'required|min:2|numeric',
             'harga_jual' => 'required|min:2|numeric',
+            'id_kategori' => 'required||numeric',
+            'id_satuan' => 'required|numeric',
         ]);
+
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);

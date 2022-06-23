@@ -150,11 +150,13 @@ class PenjualanController extends Controller
         if (!$penjualan) {
             abort(404);
         }
+        $jam = date_format($penjualan->created_at, "H:i:s");
+        $tanggal = date_format($penjualan->created_at, "d-m-Y");
         $detail = PenjualanDetail::with('produk')
             ->where('id_penjualan', session('id_penjualan'))
             ->get();
 
-        return view('penjualan.nota_kecil', compact('setting', 'penjualan', 'detail'));
+        return view('penjualan.nota_kecil', compact('setting', 'penjualan', 'detail', 'jam', 'tanggal'));
     }
 
     public function notaBesar()
