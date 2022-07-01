@@ -44,7 +44,7 @@
             </div>
             <div class="form-group">
                 <label for="diskon">Diskon</label>
-                <input type="diskon" name="diskon" id="diskon" class="form-control">
+                <input type="diskon" name="diskon" id="diskon" class="form-control" value="0">
             </div>
         </div>
 

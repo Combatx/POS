@@ -86,11 +86,16 @@ class ProdukController extends Controller
             'id_satuan' => 'required|numeric',
         ]);
 
+
+
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
+
         $data = $request->all();
+        $data['harga_beli'] = str_replace('.', '', $request->harga_beli);
+        $data['harga_jual'] = str_replace('.', '', $request->harga_jual);
         $produk = Produk::create($data);
         return response()->json(['data' => $produk, 'message' => 'Produk berhasil ditambahkan!']);
     }
