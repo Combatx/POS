@@ -11,8 +11,11 @@
         <div class="col-lg-12">
             <x-card>
                 <x-slot name="header">
-                    <button onclick="addForm()" class="btn btn-primary"><i class="fa fa-plus-circle">
-                            Transasksi Baru</i></button>
+                    {{-- <button onclick="addForm()" class="btn btn-primary"><i class="fa fa-plus-circle">
+                            Transasksi Baru</i></button> --}}
+                    <a href="{{ route('pembelian.create') }}" class="btn btn-primary">
+                        <i class="fa fa-plus-circle"> Transasksi Baru</i>
+                    </a>
                     @empty(!session('id_pembelian'))
                         <a href="{{ route('pembelian_detail.index') }}" class="btn btn-info "><i class="fa fa-pencil">
                                 Transasksi Aktif</i></a>
@@ -35,7 +38,7 @@
         </div>
     </div>
 
-    @includeIf('pembelian.supplier')
+    {{-- @includeIf('pembelian.supplier') --}}
     @includeIf('pembelian.detail')
 @endsection
 
@@ -114,7 +117,8 @@
         });
 
         function addForm(url) {
-            $('#modal-supplier').modal('show');
+            //$('#modal-supplier').modal('show');
+            get
         }
 
         function showDetail(url) {

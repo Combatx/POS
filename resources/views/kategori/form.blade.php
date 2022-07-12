@@ -12,6 +12,10 @@
                 <label for="nama">Nama Kategori</label>
                 <input type="text" name="nama" id="nama" class="form-control" required>
             </div>
+            <div class="form-group">
+                <label for="kode_kategori">Kode Kategori</label>
+                <input type="text" name="kode_kategori" id="kode_kategori" class="form-control kategori" required>
+            </div>
         </div>
     </div>
 

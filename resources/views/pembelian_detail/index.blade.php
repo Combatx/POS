@@ -42,19 +42,34 @@
         <div class="col-md-12">
             <x-card>
                 <x-slot name="header">
+                    <p><span class="text-danger font-weight-bold" style="font-size: 25px;">Mohon untuk memilih Supplier
+                            !!!</span></p>
+                    <button onclick="showsupplier()" class="btn btn-success"><i class="fas fa-search"></i> Pilih
+                        Supplier</button>
+                    <br>
+                    {{-- <label for="suppliertest"><span class="text-danger">Mohon untuk memilih Supplier !</span></label>
+                    <select style="width: 400px;" name="suppliertest" id="suppliertest" class="suppliertest"
+                        onchange="getsupplier(this.selectedOptions[0].value)">
+                        <option selected disabled>Pilih Supplier</option>
+                        @foreach ($suppliershow as $item)
+                            <option value="{{ $item->id_supplier }}">{{ $item->nama }}
+                            </option>
+                        @endforeach
+                    </select> --}}
                     <x-table>
                         <thead>
                             <tr>
-                                <td>Supplier</td>
-                                <td>: {{ $supplier->nama }}</td>
+                                <td width=30%>Supplier</td>
+                                <td width=70%>: <span id="supplier_nama">-</span>
+                                </td>
                             </tr>
                             <tr>
-                                <td>Telepon</td>
-                                <td>: {{ $supplier->telepon }}</td>
+                                <td width=30%>Telepon</td>
+                                <td width=70%>: <span id="supplier_telepon">-</span></td>
                             </tr>
                             <tr>
-                                <td>Alamat</td>
-                                <td>{{ $supplier->alamat }}</td>
+                                <td width=30%>Alamat</td>
+                                <td width=70%>: <span id="supplier_alamat">-</span></td>
                             </tr>
                         </thead>
                     </x-table>
@@ -103,6 +118,7 @@
                             <input type="hidden" name="total" id="total">
                             <input type="hidden" name="total_item" id="total_item">
                             <input type="hidden" name="bayar" id="bayar">
+                            <input type="hidden" name="id_supplier" id="id_supplier">
 
                             <div class="form-group row">
                                 <label for="totalrp" class="col-lg-2 control-label">Total</label>
@@ -135,14 +151,18 @@
         </div>
     </div>
     @includeIf('pembelian_detail.produk')
+    @includeIf('pembelian_detail.supplier')
+
 @endsection
 
 @includeIf('includes.datatables')
 @includeIf('includes.jquery-mask')
+@includeIf('includes.select2')
 
 @push('script')
     <script>
-        let table, table2;
+        let table, table2, tablesupplier;
+        let modal = '#modal-form';
         $(function() {
             $('body').addClass('sidebar-closed sidebar-collapse');
             table = $('.table-pembelian').DataTable({
@@ -226,11 +246,59 @@
             });
 
             $('.btn-simpan').on('click', function() {
+                ceksupplier();
                 $('.form-pembelian').submit();
             })
 
+            $('.suppliertest').select2();
             inputMask();
         });
+
+
+
+        tablesupplier = $('.table-supplier').DataTable({
+            processing: true,
+            autoWidth: false,
+            ajax: {
+                url: '{{ route('pembelian_detail.data_supplier') }}',
+            },
+            columns: [{
+                    data: 'DT_RowIndex',
+                    searchable: false,
+                    sortable: false,
+                },
+                {
+                    data: 'nama'
+                },
+                {
+                    data: 'alamat'
+                },
+                {
+                    data: 'telepon'
+                },
+                {
+                    data: 'action',
+                    searchable: false,
+                    sortable: false,
+                },
+            ]
+        });
+
+
+        function getsupplier(id) {
+            $.get(`{{ url('/pembelian_detail/getsupplier') }}/${id} `)
+                .done(response => {
+                    console.log(response.nama);
+                    document.getElementById("supplier_nama").innerHTML = response.nama;
+                    document.getElementById("supplier_telepon").innerHTML = response.telepon;
+                    document.getElementById("supplier_alamat").innerHTML = response.alamat;
+                    $('#id_supplier').val(response.id_supplier);
+                    $('#modal-supplier').modal('hide');
+                })
+                .fail(errors => {
+                    alert('tidak dapat menampilkan data supplier');
+                })
+        }
 
         function inputMask() {
             $('#diskon').mask('#.##0', {
@@ -299,6 +367,23 @@
                     alert('Tidak dapat menampikan data');
                     return;
                 })
+        }
+
+        function ceksupplier() {
+            if ($('#id_supplier').val() == '' || $('#id_supplier').val() == null) {
+                alert('Pilih Supplier terlebih Dahulu !!');
+                preventDefault();
+            }
+            return;
+        }
+
+        function showsupplier() {
+            //console.log('fsdf');
+            $('#modal-supplier').modal('show');
+        }
+
+        function refreshsupplier() {
+            tablesupplier.ajax.reload();
         }
     </script>
 @endpush

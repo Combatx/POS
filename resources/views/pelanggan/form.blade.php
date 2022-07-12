@@ -17,8 +17,8 @@
                 <textarea name="alamat" id="alamat" rows="3" class="form-control" required></textarea>
             </div>
             <div class="form-group">
-                <label for="telepon">Telepon Supplier</label>
-                <input type="number" name="telepon" id="telepon" class="form-control supplier">
+                <label for="telepon">Telepon Pelanggan</label>
+                <input type="number" name="telepon" id="telepon" class="form-control pelanggan">
             </div>
         </div>
 

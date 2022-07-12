@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Satuan')
+@section('title', 'Pelanggan')
 
 @section('breadcrumb')
     @parent
-    <li class="breadcrumb-item"><a href="#">Satuan</a></li>
+    <li class="breadcrumb-item"><a href="#">Pelanggan</a></li>
 @endsection
 
 @section('content')
@@ -12,20 +12,22 @@
         <div class="col-lg-12">
             <x-card>
                 <x-slot name="header">
-                    <button onclick="addForm(`{{ route('satuan.store') }}`)" class="btn btn-primary"><i
+                    <button onclick="addForm(`{{ route('pelanggan.store') }}`)" class="btn btn-primary"><i
                             class="fas fa-plus-circle"></i> Tambah</button>
                 </x-slot>
                 <x-table>
                     <x-slot name="thead">
                         <th width="10%">No</th>
-                        <th>Nama Satuan</th>
+                        <th>Nama Pelanggan</th>
+                        <th>Nama Alamat</th>
+                        <th width="20%">Nama Telepon</th>
                         <th width="20%"><i class="fas fa-cog"></i></th>
                     </x-slot>
                 </x-table>
             </x-card>
         </div>
     </div>
-    @includeIf('satuan.form')
+    @includeIf('pelanggan.form')
 
 @endsection
 
@@ -40,7 +42,7 @@
             processing: true,
             autoWidth: false,
             ajax: {
-                url: '{{ route('satuan.data') }}',
+                url: '{{ route('pelanggan.data') }}',
             },
             columns: [{
                     data: 'DT_RowIndex',
@@ -49,6 +51,12 @@
                 },
                 {
                     data: 'nama'
+                },
+                {
+                    data: 'alamat'
+                },
+                {
+                    data: 'telepon'
                 },
                 {
                     data: 'action',
@@ -175,7 +183,7 @@
             }, 3000);
         }
 
-        $(".satuan").on("keypress", function(event) {
+        $(".pelanggan").on("keypress", function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
                 submitForm(this.form);

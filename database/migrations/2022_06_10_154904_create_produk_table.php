@@ -17,7 +17,7 @@ class CreateProdukTable extends Migration
             $table->increments('id_produk');
             $table->unsignedInteger('id_kategori');
             $table->unsignedInteger('id_satuan');
-            $table->string('kode_barang')->unique();
+            $table->string('kode_barang')->unique()->nullable();
             $table->string('nama_barang')->unique();
             $table->integer('harga_beli');
             $table->integer('harga_jual');

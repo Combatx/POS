@@ -3,6 +3,7 @@
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KategoriController;
+use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PembelianDetailController;
 use App\Http\Controllers\PenjualanController;
@@ -43,14 +44,18 @@ Route::group([
     Route::get('/supplier/data', [SupplierController::class, 'data'])->name('supplier.data');
     Route::resource('/supplier', SupplierController::class);
 
+    Route::get('/pelanggan/data', [PelangganController::class, 'data'])->name('pelanggan.data');
+    Route::resource('/pelanggan', PelangganController::class);
+
     Route::get('/produk/data', [ProdukController::class, 'data'])->name('produk.data');
     Route::resource('/produk', ProdukController::class);
 
     Route::get('/pembelian/data', [PembelianController::class, 'data'])->name('pembelian.data');
-    Route::get('/pembelian/{id}/create', [PembelianController::class, 'create'])->name('pembelian.create');
-    Route::resource('/pembelian', PembelianController::class)
-        ->except('create');
+    //Route::get('/pembelian/{id}/create', [PembelianController::class, 'create'])->name('pembelian.create');
+    Route::resource('/pembelian', PembelianController::class);
 
+    Route::get('/pembelian_detail/getsupplier/{id}', [PembelianDetailController::class, 'getsupplier'])->name('pembelian_detail.getsupplier');
+    Route::get('/pembelian_detail/supplier/data', [PembelianDetailController::class, 'data_supplier'])->name('pembelian_detail.data_supplier');
     Route::get('/pembelian_detail/{id}/data', [PembelianDetailController::class, 'data'])->name('pembelian_detail.data');
     Route::get('/pembelian_detail/loadform/{diskon}/{total}', [PembelianDetailController::class, 'loadForm'])->name('pembelian_detail.load_form');
     Route::resource('/pembelian_detail', PembelianDetailController::class)

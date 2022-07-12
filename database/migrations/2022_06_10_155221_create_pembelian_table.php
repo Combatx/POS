@@ -15,7 +15,8 @@ class CreatePembelianTable extends Migration
     {
         Schema::create('pembelian', function (Blueprint $table) {
             $table->increments('id_pembelian');
-            $table->unsignedInteger('id_supplier');
+            $table->unsignedInteger('id_supplier')
+                ->nullable();
             $table->unsignedBigInteger('id_user');
             $table->integer('total_item');
             $table->integer('total_harga');

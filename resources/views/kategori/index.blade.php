@@ -19,6 +19,7 @@
                     <x-slot name="thead">
                         <th width="10%">No</th>
                         <th>Nama Kategori</th>
+                        <th>Kode Kategori</th>
                         <th width="20%"><i class="fas fa-cog"></i></th>
                     </x-slot>
                 </x-table>
@@ -49,6 +50,9 @@
                 },
                 {
                     data: 'nama'
+                },
+                {
+                    data: 'kode_kategori'
                 },
                 {
                     data: 'action',
@@ -125,7 +129,6 @@
 
         function resetForm(selector) {
             $(selector)[0].reset();
-
             $('.form-control').removeClass('is-invalid');
             $('.invalid-feedback').remove();
         }
@@ -147,8 +150,10 @@
 
             for (error in errors) {
                 $(`[name=${error}]`).addClass('is-invalid');
+
                 $(`<span class="error invalid-feedback"> ${errors[error][0]}</span>`)
                     .insertAfter($(`[name=${error}]`));
+
             }
         }
 
@@ -174,5 +179,12 @@
                 $('.toasts-top-right').remove();
             }, 3000);
         }
+
+        $(".kategori").on("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                submitForm(this.form);
+            }
+        });
     </script>
 @endpush

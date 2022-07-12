@@ -15,7 +15,8 @@ class CreatePenjualanTable extends Migration
     {
         Schema::create('penjualan', function (Blueprint $table) {
             $table->increments('id_penjualan');
-            $table->unsignedInteger('id_pelanggan');
+            $table->unsignedInteger('id_pelanggan')
+                ->nullable();
             $table->unsignedBigInteger('id_user');
             $table->integer('total_item');
             $table->integer('total_harga');

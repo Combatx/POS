@@ -19,7 +19,11 @@ class PenjualanController extends Controller
 
     public function data()
     {
-        $penjualan = Penjualan::orderBy('id_penjualan', 'desc')->get();
+        $penjualan = Penjualan::orderBy('id_penjualan', 'desc')
+            ->where('total_item', '!=', 0)
+            ->where('total_harga', '!=', 0)
+            ->where('bayar', '!=', 0)
+            ->get();
         // return $penjualan->user->name;
         return datatables()
             ->of($penjualan)
@@ -120,6 +124,16 @@ class PenjualanController extends Controller
             $produk->update();
         }
 
+        $penjualankosong = Penjualan::where('total_item', '=', 0)
+            ->where('total_harga', '=', 0)
+            ->where('bayar', '=', 0)
+            ->get();
+        if ($penjualankosong->count() != 0) {
+            foreach ($penjualankosong as $item) {
+                $delete_detail = PenjualanDetail::where('id_penjualan', $item->id_penjualan)->delete();
+                $delete_penjualan =  Penjualan::where('id_penjualan', $item->id_penjualan)->delete();
+            }
+        }
         return redirect()->route('transaksi.selesai');
     }
 

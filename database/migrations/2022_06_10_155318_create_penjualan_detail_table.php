@@ -17,7 +17,8 @@ class CreatePenjualanDetailTable extends Migration
             $table->increments('id_penjualan_detail');
             $table->unsignedInteger('id_penjualan');
             $table->unsignedInteger('id_produk');
-            $table->unsignedInteger('id_pengiriman');
+            $table->unsignedInteger('id_pengiriman')
+                ->nullable();
             $table->integer('harga_jual');
             $table->integer('jumlah');
             $table->integer('diskon');

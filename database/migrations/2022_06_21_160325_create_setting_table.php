@@ -19,7 +19,8 @@ class CreateSettingTable extends Migration
             $table->text('alamat')->nullable();
             $table->string('telepon');
             $table->tinyInteger('tipe_nota');
-            $table->string('path_logo');
+            $table->string('path_logo')
+                ->nullable();
             $table->timestamps();
         });
     }

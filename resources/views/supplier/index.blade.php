@@ -182,5 +182,12 @@
                 $('.toasts-top-right').remove();
             }, 3000);
         }
+
+        $(".supplier").on("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                submitForm(this.form);
+            }
+        });
     </script>
 @endpush

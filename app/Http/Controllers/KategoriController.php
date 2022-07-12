@@ -55,13 +55,14 @@ class KategoriController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nama' => 'required|min:2|unique:kategori,nama',
+            'kode_kategori' => 'required|alpha|min:1|unique:kategori,kode_kategori',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $data = $request->only('nama');
+        $data = $request->all();
         $kategori = Kategori::create($data);
         return response()->json(['data' => $kategori, 'message' => 'Kategori berhasil ditambahkan!']);
     }
@@ -99,13 +100,14 @@ class KategoriController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'nama' => 'required|min:2|unique:kategori,nama,' . $kategori->id_kategori . ',id_kategori',
+            'kode_kategori' => 'required|alpha|min:1|unique:kategori,kode_kategori,' . $kategori->id_kategori . ',id_kategori',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $data = $request->only('nama');
+        $data = $request->all();
 
         $kategori->update($data);
         return response()->json(['data' => $kategori, 'message' => 'Kategori berhasil diedit!']);

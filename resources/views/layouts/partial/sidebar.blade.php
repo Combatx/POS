@@ -71,7 +71,8 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="" class="nav-link {{ request()->is('pelanggan*') ? 'active' : '' }}">
+                    <a href="{{ route('pelanggan.index') }}"
+                        class="nav-link {{ request()->is('pelanggan*') ? 'active' : '' }}">
                         <i class="fas fa-users"></i>
                         <p>
                             Pelanggan
@@ -108,10 +109,19 @@
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('transaksi.baru') }}"
-                        class="nav-link {{ request()->is('transaksi/baru') ? 'active' : '' }} {{ request()->is('transaksi/selesai') ? 'active' : '' }}">
+                        class="nav-link {{ request()->is('transaksi/baru') ? 'active' : '' }} || {{ request()->is('transaksi/selesai') ? 'active' : '' }}">
                         <i class="fas fa-cash-register"></i>
                         <p>
                             Transaksi Baru
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#"
+                        class="nav-link {{ request()->is('setting') ? 'active' : '' }} ? 'active' : '' }}">
+                        <i class="fas fa-cog"></i>
+                        <p>
+                            Setting
                         </p>
                     </a>
                 </li>

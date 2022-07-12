@@ -8,17 +8,18 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <div class="form-group">
+            {{-- <div class="form-group">
                 <label for="kode_barang">Kode Barang</label>
                 <input type="text" name="kode_barang" id="kode_barang" class="form-control" required>
-            </div>
+            </div> --}}
             <div class="form-group">
                 <label for="nama_barang">Nama Barang</label>
                 <input type="text" name="nama_barang" id="nama_barang" class="form-control" required>
             </div>
             <div class="form-group">
                 <label for="kategori">Kategori</label>
-                <select name="id_kategori" id="satuan" class="custom-select">
+                <select name="id_kategori" id="kategori" class="custom-select select2class kategoriform"
+                    onclick="">
                     <option disabled selected>Pilih Salah Satu</option>
                     @foreach ($kategori as $key => $item)
                         <option value="{{ $key }}">{{ $item }}</option>
@@ -27,7 +28,7 @@
             </div>
             <div class="form-group">
                 <label for="satuan">Satuan</label>
-                <select name="id_satuan" id="satuan" class="custom-select">
+                <select name="id_satuan" id="satuan" class="custom-select select2class satuanform">
                     <option disabled selected>Pilih Salah Satu</option>
                     @foreach ($satuan as $key => $item)
                         <option value="{{ $key }}">{{ $item }}</option>
@@ -40,11 +41,11 @@
             </div>
             <div class="form-group">
                 <label for="harga_jual">Harga Jual</label>
-                <input type="text" name="harga_jual" id="harga_jual" class="form-control" required>
+                <input type="text" name="harga_jual" id="harga_jual" class="form-control produk" required>
             </div>
             <div class="form-group">
                 <label for="diskon">Diskon</label>
-                <input type="diskon" name="diskon" id="diskon" class="form-control" value="0">
+                <input type="diskon" name="diskon" id="diskon" class="form-control produk" value="0">
             </div>
         </div>
 

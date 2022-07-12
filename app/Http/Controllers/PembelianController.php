@@ -18,7 +18,11 @@ class PembelianController extends Controller
 
     public function data()
     {
-        $pembelian = Pembelian::orderBy('id_pembelian', 'desc')->get();
+        $pembelian = Pembelian::orderBy('id_pembelian', 'desc')
+            ->where('total_item', '!=', 0)
+            ->where('total_harga', '!=', 0)
+            ->where('bayar', '!=', 0)
+            ->get();
 
         return datatables()
             ->of($pembelian)
@@ -53,10 +57,9 @@ class PembelianController extends Controller
             ->make(true);
     }
 
-    public function create($id)
+    public function create()
     {
         $pembelian = new Pembelian();
-        $pembelian->id_supplier = $id;
         $pembelian->total_item = 0;
         $pembelian->total_harga = 0;
         $pembelian->diskon = 0;
@@ -65,7 +68,7 @@ class PembelianController extends Controller
         $pembelian->save();
 
         session(['id_pembelian' => $pembelian->id_pembelian]);
-        session(['id_supplier' => $pembelian->id_supplier]);
+        //session(['id_supplier' => $pembelian->id_supplier]);
 
         return redirect()->route('pembelian_detail.index');
     }
@@ -78,6 +81,7 @@ class PembelianController extends Controller
         $pembelian->total_harga = $request->total;
         $pembelian->diskon = $diskon;
         $pembelian->bayar = $request->bayar;
+        $pembelian->id_supplier = $request->id_supplier;
         $pembelian->update();
 
         $detail = PembelianDetail::where('id_pembelian', $pembelian->id_pembelian)->get();
@@ -86,6 +90,17 @@ class PembelianController extends Controller
             $produk = Produk::find($item->id_produk);
             $produk->stok += $item->jumlah;
             $produk->update();
+        }
+
+        $pembeliankosong = Pembelian::where('total_item', '=', 0)
+            ->where('total_harga', '=', 0)
+            ->where('bayar', '=', 0)
+            ->get();
+        if ($pembeliankosong->count() != 0) {
+            foreach ($pembeliankosong as $item) {
+                $delete_detail = PembelianDetail::where('id_pembelian', $item->id_pembelian)->delete();
+                $delete_pembelian =  Pembelian::where('id_pembelian', $item->id_pembelian)->delete();
+            }
         }
 
         return redirect()->route('pembelian.index');

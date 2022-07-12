@@ -78,7 +78,7 @@ class ProdukController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'kode_barang' => 'required|min:2|unique:produk,kode_barang',
+            //'kode_barang' => 'required|min:2|unique:produk,kode_barang',
             'nama_barang' => 'required|min:2|unique:produk,nama_barang',
             'harga_beli' => 'required|min:2|numeric',
             'harga_jual' => 'required|min:2|numeric',
@@ -97,6 +97,12 @@ class ProdukController extends Controller
         $data['harga_beli'] = str_replace('.', '', $request->harga_beli);
         $data['harga_jual'] = str_replace('.', '', $request->harga_jual);
         $produk = Produk::create($data);
+        //$kodeBarang = Kategori::where('id_kategori', $produk->id_kategori)->value('kode_kategori') . $produk->id_produk;
+        $kodelast = Produk::where('id_kategori', $produk->id_kategori)->orderBy('id_produk', 'desc')->skip(1)->value('kode_barang') ?? 0;
+        $pisah = preg_replace('/[^0-9]/', '', $kodelast);
+        $kodeBarang = Kategori::where('id_kategori', $produk->id_kategori)->value('kode_kategori') . ($pisah + 1);
+        $updateKode = Produk::where('id_produk', $produk->id_produk)
+            ->update(['kode_barang' =>  $kodeBarang]);
         return response()->json(['data' => $produk, 'message' => 'Produk berhasil ditambahkan!']);
     }
 
@@ -133,7 +139,7 @@ class ProdukController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'kode_barang' => 'required|min:2|unique:produk,kode_barang,' . $produk->id_produk . ',id_produk',
+            //'kode_barang' => 'required|min:2|unique:produk,kode_barang,' . $produk->id_produk . ',id_produk',
             'nama_barang' => 'required|min:2|unique:produk,nama_barang,' . $produk->id_produk . ',id_produk',
             'harga_beli' => 'required|min:1|numeric',
             'harga_jual' => 'required|min:1|numeric',

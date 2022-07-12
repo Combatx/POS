@@ -14,13 +14,14 @@ class PembelianDetailController extends Controller
     {
         $id_pembelian = session('id_pembelian');
         $produk = Produk::orderBy('nama_barang')->get();
-        $supplier = Supplier::find(session('id_supplier'));
+        //$supplier = Supplier::find(session('id_supplier'));
         $diskon = Pembelian::find($id_pembelian)->diskon ?? 0;
 
-        if (!$supplier) {
-            abort(404);
-        }
-        return view('pembelian_detail.index', compact('id_pembelian', 'produk', 'supplier', 'diskon'));
+        $suppliershow = Supplier::get();
+        // if (!$supplier) {
+        //     abort(404);
+        // }
+        return view('pembelian_detail.index', compact('id_pembelian', 'produk', 'diskon', 'suppliershow'));
     }
 
     public function data($id)
@@ -112,5 +113,25 @@ class PembelianDetailController extends Controller
         ];
 
         return response()->json($data);
+    }
+
+    public function getsupplier($id)
+    {
+        $supplier = Supplier::where('id_supplier', $id)->first();
+        return response()->json($supplier);
+    }
+
+    public function data_supplier()
+    {
+        $query = Supplier::orderBy('id_supplier', 'desc')->get();
+
+        return datatables($query)
+            ->addIndexColumn()
+            ->addColumn('action', function ($query) {
+                return '
+            <button type="button" onclick="getsupplier(' . $query->id_supplier . ')" class="btn btn-primary btn-sm">Pilih <i class="fas fa-check"></i></i></button>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
     }
 }

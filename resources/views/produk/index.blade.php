@@ -16,7 +16,7 @@
                     <div class="form-group ml-2">
                         <div class="row">
                             <label for="kategori2">Kategori</label>
-                            <select name="kategori2" id="kategori2" class="custom-select">
+                            <select name="kategori2" id="kategori2" class="custom-select ">
                                 <option disabled selected>Pilih Salah Satu</option>
                                 @foreach ($kategori as $key => $item)
                                     <option value="{{ $key }}"> {{ $item }}</option>
@@ -25,13 +25,20 @@
                         </div>
                     </div>
                     <div class="form-group ml-5">
-                        <label for="satuan2">Satuan</label>
-                        <select name="satuan2" id="satuan2" class="custom-select">
-                            <option disabled selected>Pilih Salah Satu</option>
-                            @foreach ($satuan as $key => $item)
-                                <option value="{{ $key }}"> {{ $item }}</option>
-                            @endforeach
-                        </select>
+                        <div class="row">
+                            <label for="satuan2">Satuan</label>
+                            <select name="satuan2" id="satuan2" class="custom-select">
+                                <option disabled selected>Pilih Salah Satu</option>
+                                @foreach ($satuan as $key => $item)
+                                    <option value="{{ $key }}"> {{ $item }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row d-inline ml-5">
+                        <br>
+                        <button class="btn btn-primary" onclick="refresh_table()"><i class="fas fa-redo"></i> Reset</button>
                     </div>
                 </div>
 
@@ -62,6 +69,7 @@
 
 @includeIf('includes.datatables')
 @includeIf('includes.jquery-mask')
+@includeIf('includes.select2')
 
 @push('script')
     <script>
@@ -69,6 +77,8 @@
         let table;
 
         $(document).ready(function() {
+            $('.satuanform').select2();
+            $('.kategoriform').select2();
             inputMask();
         });
         table = $('.table').DataTable({
@@ -136,6 +146,7 @@
         });
 
         $('[name=satuan2]').on('change', function() {
+
             table.ajax.reload();
         });
 
@@ -206,7 +217,7 @@
 
         function resetForm(selector) {
             $(selector)[0].reset();
-
+            $('.select2class').trigger('change');
             $('.form-control').removeClass('is-invalid');
             $('.invalid-feedback').remove();
         }
@@ -217,6 +228,7 @@
                     $(`[name=${field}]`).val(originalForm[field]).trigger('input');
                 }
             }
+            $('select').trigger('change');
         }
 
         function loopErrors(errors) {
@@ -228,10 +240,22 @@
 
             for (error in errors) {
                 $(`[name=${error}]`).addClass('is-invalid');
-                $(`<span class="error invalid-feedback"> ${errors[error][0]}</span>`)
-                    .insertAfter($(`[name=${error}]`));
+                if ($(`[name=${error}]`).hasClass('select2class')) {
+                    $(`<span class="error invalid-feedback"> ${errors[error][0]}</span>`)
+                        .insertAfter($(`[name=${error}]`).next());
+                } else {
+                    $(`<span class="error invalid-feedback"> ${errors[error][0]}</span>`)
+                        .insertAfter($(`[name=${error}]`));
+                }
             }
         }
+
+        function refresh_table() {
+            $('[name=kategori2]').prop("selectedIndex", 0);
+            $('[name=satuan2]').prop("selectedIndex", 0);
+            table.ajax.reload();
+        }
+
 
         function showAlert(message, type) {
             let title = '';
@@ -255,5 +279,12 @@
                 $('.toasts-top-right').remove();
             }, 3000);
         }
+
+        $(".produk").on("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                submitForm(this.form);
+            }
+        });
     </script>
 @endpush

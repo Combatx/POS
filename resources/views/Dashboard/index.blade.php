@@ -112,7 +112,7 @@
                     <div class="card">
                         <div class="card-header">
                             <div class="d-flex justify-content-between mb-3">
-                                <h3>Stok Kurang Dari 11</h3>
+                                <h3>Stok Limit</h3>
                                 <button onclick="refreshstok()"
                                     style="border: 0; text-decoration: none; background: none;"><i
                                         class="fas fa-sync"></i></button>
