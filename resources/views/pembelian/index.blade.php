@@ -31,6 +31,7 @@
                         <th>Total Harga</th>
                         <th>Diskon</th>
                         <th>Total Bayar</th>
+                        <th>Staf</th>
                         <th width="15%"><i class="fa fa-cog"></i></th>
                     </x-slot>
                 </x-table>
@@ -77,6 +78,9 @@
                     },
                     {
                         data: 'bayar',
+                    },
+                    {
+                        data: 'user',
                     },
                     {
                         data: 'aksi',
