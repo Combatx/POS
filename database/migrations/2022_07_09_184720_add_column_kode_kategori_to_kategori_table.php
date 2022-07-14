@@ -15,6 +15,7 @@ class AddColumnKodeKategoriToKategoriTable extends Migration
     {
         Schema::table('kategori', function (Blueprint $table) {
             $table->string('kode_kategori')
+                ->unique()
                 ->after('nama');
         });
     }
