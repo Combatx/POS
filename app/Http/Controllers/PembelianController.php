@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pembelian;
 use App\Models\PembelianDetail;
 use App\Models\Produk;
+use App\Models\Setting;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 
@@ -13,7 +14,8 @@ class PembelianController extends Controller
     public function index()
     {
         $supplier = Supplier::orderBy('nama')->get();
-        return view('pembelian.index', compact('supplier'));
+        $appname = Setting::first()->value('nama_app');
+        return view('pembelian.index', compact('supplier', 'appname'));
     }
 
     public function data()

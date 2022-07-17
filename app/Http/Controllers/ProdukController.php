@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Kategori;
 use App\Models\Produk;
 use App\Models\Satuan;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -19,7 +20,8 @@ class ProdukController extends Controller
     {
         $kategori = Kategori::orderBy('nama')->get()->pluck('nama', 'id_kategori');
         $satuan = Satuan::orderBy('nama')->get()->pluck('nama', 'id_satuan');
-        return view('produk.index', compact('kategori', 'satuan'));
+        $appname = Setting::first()->value('nama_app');
+        return view('produk.index', compact('kategori', 'satuan', 'appname'));
     }
 
     public function data(Request $request)

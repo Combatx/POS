@@ -13,8 +13,8 @@ class PenjualanController extends Controller
 {
     public function index()
     {
-
-        return view('penjualan.index');
+        $appname = Setting::first()->value('nama_app');
+        return view('penjualan.index', compact('appname'));
     }
 
     public function data()
@@ -156,7 +156,8 @@ class PenjualanController extends Controller
     public function selesai()
     {
         $setting = Setting::first();
-        return  view('penjualan.selesai', compact('setting'));
+        $appname = Setting::first()->value('nama_app');
+        return  view('penjualan.selesai', compact('setting', 'appname'));
     }
 
     public function notaKecil()

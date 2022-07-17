@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kategori;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,7 +16,8 @@ class KategoriController extends Controller
      */
     public function index()
     {
-        return view('kategori.index');
+        $appname = Setting::first()->value('nama_app');
+        return view('kategori.index', compact('appname'));
     }
 
 

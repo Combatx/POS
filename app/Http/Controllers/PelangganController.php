@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pelanggan;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -10,7 +11,8 @@ class PelangganController extends Controller
 {
     public function index()
     {
-        return view('pelanggan.index');
+        $appname = Setting::first()->value('nama_app');
+        return view('pelanggan.index', compact('appname'));
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Setting;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -15,7 +16,8 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        return view('supplier.index');
+        $appname = Setting::first()->value('nama_app');
+        return view('supplier.index', compact('appname'));
     }
 
     /**

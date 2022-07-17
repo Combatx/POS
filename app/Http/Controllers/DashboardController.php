@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Produk;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -14,8 +15,8 @@ class DashboardController extends Controller
      */
     public function index()
     {
-
-        return view('dashboard.index');
+        $appname = Setting::first()->value('nama_app');
+        return view('dashboard.index', compact('appname'));
     }
 
     public function cekstok()

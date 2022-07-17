@@ -14,15 +14,16 @@ class PenjualanDetailController extends Controller
     {
         $produk = Produk::orderBy('nama_barang')->get();
         $diskon = Setting::first()->diskon ?? 0;
+        $appname = Setting::first()->value('nama_app');
 
         if ($id_penjualan = session('id_penjualan')) {
             $penjualan = Penjualan::find($id_penjualan);
-            return view('penjualan_detail.index', compact('produk', 'diskon', 'penjualan', 'id_penjualan'));
+            return view('penjualan_detail.index', compact('produk', 'diskon', 'penjualan', 'id_penjualan', 'appname'));
         } else {
             if (auth()->user()->level == 1) {
-                return redirect()->route('transaksi.baru');
+                return redirect()->route('transaksi.baru', compact('setting'));
             } else {
-                redirect()->route('home');
+                redirect()->route('dashboard.index');
             }
         }
     }

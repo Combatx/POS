@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Satuan;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,7 +16,8 @@ class SatuanController extends Controller
      */
     public function index()
     {
-        return view('satuan.index');
+        $appname = Setting::first()->value('nama_app');
+        return view('satuan.index', compact('appname'));
     }
 
     public function data()

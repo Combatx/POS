@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pembelian;
 use App\Models\PembelianDetail;
 use App\Models\Produk;
+use App\Models\Setting;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 
@@ -21,7 +22,8 @@ class PembelianDetailController extends Controller
         // if (!$supplier) {
         //     abort(404);
         // }
-        return view('pembelian_detail.index', compact('id_pembelian', 'produk', 'diskon', 'suppliershow'));
+        $appname = Setting::first()->value('nama_app');
+        return view('pembelian_detail.index', compact('id_pembelian', 'produk', 'diskon', 'suppliershow', 'appname'));
     }
 
     public function data($id)
