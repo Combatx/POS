@@ -14,20 +14,20 @@
         .aktif {
             margin-left: 25px;
             margin-right: 25px;
-            padding: 8px 50px;
+            padding: 8px 20px;
             text-align: center;
             text-decoration: none;
             display: inline-block;
             font-size: 16px;
             margin: 4px 2px;
             cursor: pointer;
-            border-radius: 10px;
+            border-radius: 50px;
             margin-left: 30px;
             margin-right: 30px;
 
-            background-color: white;
-            color: #007BFF;
-            border: 2px solid #007BFF;
+            background-color: #007BFF;
+            color: white;
+            /* border: 2px solid #007BFF; */
         }
 
         .nonaktif {
@@ -45,8 +45,8 @@
             margin-right: 30px;
 
             background-color: white;
-            color: #AAAAAA;
-            border: 2px solid #AAAAAA;
+            color: black;
+            /* border: 2px solid #AAAAAA; */
         }
 
 
