@@ -8,7 +8,7 @@
             </div>
             <div class="row">
                 <div class="col-md-3">
-                    @if (Auth::user()->foto == '/img/user1.png')
+                    @if (Auth::user()->foto == 'img/user1.png')
                         <img class="circle img-preview" src="{{ asset(Auth::user()->foto) }}" alt="">
                     @else
                         <img class="circle img-preview" src="{{ asset('storage/' . Auth::user()->foto) }}"

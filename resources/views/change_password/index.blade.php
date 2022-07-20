@@ -86,9 +86,11 @@
 
     <div class="card">
         <ul class="nav" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <a href="{{ route('setting.index') }}" class="nonaktif">Application Setting</a>
-            </li>
+            @if (auth()->user()->hasRole('admin'))
+                <li class="nav-item" role="presentation">
+                    <a href="{{ route('setting.index') }}" class="nonaktif">Application Setting</a>
+                </li>
+            @endif
             <li class="nav-item" role="presentation">
                 <a href="{{ route('profil.index') }}" class="nonaktif">Profil Setting</a>
             </li>

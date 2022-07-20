@@ -30,16 +30,39 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+// tanpa login
 Route::get('/login', [LoginController::class, 'index'])->name('login.index')->middleware('guest');
 Route::post('/login', [LoginController::class, 'authenticate'])->name('login.auth')->middleware('guest');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+// perlu login
 Route::group([
     'middleware' => ['auth']
 ], function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::get('/cekstok', [DashboardController::class, 'cekstok'])->name('dashboard.cekstok');
 
+    Route::resource('/profil', UserController::class);
+
+    Route::get('/reset', [ResetPWController::class, 'index'])->name('reset.index');
+    Route::put('/reset/update/{id}', [ResetPWController::class, 'update'])->name('reset.update');
+});
+
+// admin
+Route::group(['middleware' => ['auth', 'role:admin']], function () {
+    Route::resource('/setting', SettingController::class);
+
+    Route::get('/user/data', [UserCrudController::class, 'data'])->name('user.data');
+    Route::post('/user/status/{id}', [UserCrudController::class, 'status'])->name('user.status');
+    Route::resource('/user', UserCrudController::class);
+
+    Route::get('/role/data', [RoleController::class, 'data'])->name('role.data');
+    Route::resource('/role', RoleController::class);
+});
+
+
+// gudang
+Route::group(['middleware' => ['auth', 'role:gudang']], function () {
     Route::get('/kategori/data', [KategoriController::class, 'data'])->name('kategori.data');
     Route::resource('/kategori', KategoriController::class);
 
@@ -58,14 +81,15 @@ Route::group([
     Route::get('/pembelian/data', [PembelianController::class, 'data'])->name('pembelian.data');
     //Route::get('/pembelian/{id}/create', [PembelianController::class, 'create'])->name('pembelian.create');
     Route::resource('/pembelian', PembelianController::class);
-
     Route::get('/pembelian_detail/getsupplier/{id}', [PembelianDetailController::class, 'getsupplier'])->name('pembelian_detail.getsupplier');
     Route::get('/pembelian_detail/supplier/data', [PembelianDetailController::class, 'data_supplier'])->name('pembelian_detail.data_supplier');
     Route::get('/pembelian_detail/{id}/data', [PembelianDetailController::class, 'data'])->name('pembelian_detail.data');
     Route::get('/pembelian_detail/loadform/{diskon}/{total}', [PembelianDetailController::class, 'loadForm'])->name('pembelian_detail.load_form');
     Route::resource('/pembelian_detail', PembelianDetailController::class)
         ->except('create', 'show', 'edit');
+});
 
+Route::group(['middleware' => ['auth', 'role:kasir']], function () {
     Route::get('/penjualan/data', [PenjualanController::class, 'data'])->name('penjualan.data');
     Route::get('/penjualan', [PenjualanController::class, 'index'])->name('penjualan.index');
     Route::get('/penjualan/{id}', [PenjualanController::class, 'show'])->name('penjualan.show');
@@ -81,22 +105,4 @@ Route::group([
     Route::get('transaksi/loadform/{id}/{total}/{diterima}', [PenjualanDetailController::class, 'loadForm'])->name('transaksi.load_form');
     Route::resource('/transaksi', PenjualanDetailController::class)
         ->except('show');
-
-    Route::resource('/setting', SettingController::class);
-
-    Route::resource('/profil', UserController::class);
-
-    Route::get('/user/data', [UserCrudController::class, 'data'])->name('user.data');
-    Route::post('/user/status/{id}', [UserCrudController::class, 'status'])->name('user.status');
-    Route::resource('/user', UserCrudController::class);
-
-    Route::get('/role/data', [RoleController::class, 'data'])->name('role.data');
-    Route::resource('/role', RoleController::class);
-
-    Route::get('/reset', [ResetPWController::class, 'index'])->name('reset.index');
-    Route::put('/reset/update/{id}', [ResetPWController::class, 'update'])->name('reset.update');
-});
-
-Route::group(['middleware' => ['auth', 'role:admin']], function () {
-    Route::resource('/setting', SettingController::class);
 });

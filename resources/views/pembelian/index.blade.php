@@ -16,10 +16,10 @@
                     <a href="{{ route('pembelian.create') }}" class="btn btn-primary">
                         <i class="fa fa-plus-circle"> Transasksi Baru</i>
                     </a>
-                    @empty(!session('id_pembelian'))
+                    {{-- @empty(!session('id_pembelian'))
                         <a href="{{ route('pembelian_detail.index') }}" class="btn btn-info "><i class="fa fa-pencil">
                                 Transasksi Aktif</i></a>
-                    @endempty
+                    @endempty --}}
                 </x-slot>
 
                 <x-table class="table-pembelian">
