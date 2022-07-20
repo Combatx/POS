@@ -20,9 +20,14 @@ class LoginController extends Controller
         ]);
 
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+            if (Auth::user()->status == 'Aktif') {
 
-            return redirect()->intended('/');
+                $request->session()->regenerate();
+                return redirect()->intended('/');
+            } elseif (Auth::user()->status == 'NonAktif') {
+                Auth::logout();
+                return back()->with('loginError', 'Akun tidak akif Silahkan hubungi admin');
+            };
         }
 
         return back()->with('loginError', 'Username atau Password Salah');

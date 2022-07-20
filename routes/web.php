@@ -9,10 +9,13 @@ use App\Http\Controllers\PembelianDetailController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\PenjualanDetailController;
 use App\Http\Controllers\ProdukController;
+use App\Http\Controllers\ResetPWController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SatuanController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserCrudController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -80,5 +83,20 @@ Route::group([
         ->except('show');
 
     Route::resource('/setting', SettingController::class);
+
     Route::resource('/profil', UserController::class);
+
+    Route::get('/user/data', [UserCrudController::class, 'data'])->name('user.data');
+    Route::post('/user/status/{id}', [UserCrudController::class, 'status'])->name('user.status');
+    Route::resource('/user', UserCrudController::class);
+
+    Route::get('/role/data', [RoleController::class, 'data'])->name('role.data');
+    Route::resource('/role', RoleController::class);
+
+    Route::get('/reset', [ResetPWController::class, 'index'])->name('reset.index');
+    Route::put('/reset/update/{id}', [ResetPWController::class, 'update'])->name('reset.update');
+});
+
+Route::group(['middleware' => ['auth', 'role:admin']], function () {
+    Route::resource('/setting', SettingController::class);
 });

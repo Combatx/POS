@@ -82,8 +82,8 @@ class ProdukController extends Controller
         $validator = Validator::make($request->all(), [
             //'kode_barang' => 'required|min:2|unique:produk,kode_barang',
             'nama_barang' => 'required|min:2|unique:produk,nama_barang',
-            'harga_beli' => 'required|min:2|numeric',
-            'harga_jual' => 'required|min:2|numeric',
+            'harga_beli' => 'required|min:2',
+            'harga_jual' => 'required|min:2',
             'id_kategori' => 'required||numeric',
             'id_satuan' => 'required|numeric',
         ]);
@@ -127,7 +127,6 @@ class ProdukController extends Controller
      */
     public function edit($id)
     {
-        //
     }
 
     /**
@@ -143,8 +142,8 @@ class ProdukController extends Controller
         $validator = Validator::make($request->all(), [
             //'kode_barang' => 'required|min:2|unique:produk,kode_barang,' . $produk->id_produk . ',id_produk',
             'nama_barang' => 'required|min:2|unique:produk,nama_barang,' . $produk->id_produk . ',id_produk',
-            'harga_beli' => 'required|min:1|numeric',
-            'harga_jual' => 'required|min:1|numeric',
+            'harga_beli' => 'required|min:1',
+            'harga_jual' => 'required|min:1',
             'id_kategori' => 'required|numeric',
             'id_satuan' => 'required|numeric',
         ]);

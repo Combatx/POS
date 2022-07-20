@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Profil')
+@section('title', 'Change Password')
 
 @push('css')
     <style>
@@ -79,7 +79,7 @@
 @endpush
 @section('breadcrumb')
     @parent
-    <li class="breadcrumb-item"><a href="#">Profil</a></li>
+    <li class="breadcrumb-item"><a href="#">Change Password</a></li>
 @endsection
 
 @section('content')
@@ -90,10 +90,10 @@
                 <a href="{{ route('setting.index') }}" class="nonaktif">Application Setting</a>
             </li>
             <li class="nav-item" role="presentation">
-                <a href="{{ route('profil.index') }}" class="aktif">Profil Setting</a>
+                <a href="{{ route('profil.index') }}" class="nonaktif">Profil Setting</a>
             </li>
             <li class="nav-item" role="presentation">
-                <a href="{{ route('reset.index') }}" class="nonaktif">Reset Password</a>
+                <a href="{{ route('reset.index') }}" class="aktif">Reset Password</a>
             </li>
             <li class="nav-item" role="presentation">
                 <a href="#" class="nonaktif">About Setting</a>
@@ -104,7 +104,7 @@
 
         {{-- content --}}
         <div>
-            @includeIf('profil.form')
+            @includeIf('change_password.form')
         </div>
     </div>
 @endsection
@@ -117,6 +117,12 @@
             @if (session()->has('success'))
                 showAlert('Profil Berhasil Di Edit !!', 'success');
             @endif
+
+            @if (session()->has('gagal'))
+                showAlert('Cek Kembali Password Lama !!', 'danger');
+            @endif
+
+
         });
 
 

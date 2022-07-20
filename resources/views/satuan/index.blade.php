@@ -140,7 +140,7 @@
 
         function loopErrors(errors) {
             $('.invalid-feedback').remove();
-
+            $('.is-invalid').removeClass('is-invalid');
             if (errors == undefined) {
                 return;
             }

@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Produk')
+@section('title', 'Kelola User')
 
 @section('breadcrumb')
     @parent
-    <li class="breadcrumb-item"><a href="#">Produk</a></li>
+    <li class="breadcrumb-item"><a href="#"> User</a></li>
 @endsection
 
 @section('content')
@@ -12,114 +12,68 @@
         <div class="col-lg-12">
             <x-card>
 
-                <div class="d-flex justify-content-start mb-3">
-                    <div class="form-group ml-2">
-                        <div class="row">
-                            <label for="kategori2">Kategori</label>
-                            <select name="kategori2" id="kategori2" class="custom-select ">
-                                <option disabled selected>Pilih Salah Satu</option>
-                                @foreach ($kategori as $key => $item)
-                                    <option value="{{ $key }}"> {{ $item }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group ml-5">
-                        <div class="row">
-                            <label for="satuan2">Satuan</label>
-                            <select name="satuan2" id="satuan2" class="custom-select">
-                                <option disabled selected>Pilih Salah Satu</option>
-                                @foreach ($satuan as $key => $item)
-                                    <option value="{{ $key }}"> {{ $item }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row d-inline ml-5">
-                        <br>
-                        <button class="btn btn-primary" onclick="refresh_table()"><i class="fas fa-redo"></i> Reset</button>
-                    </div>
-                </div>
-
                 <x-slot name="header">
-                    <button onclick="addForm(`{{ route('produk.store') }}`)" class="btn btn-primary"><i
+                    <button onclick="addForm(`{{ route('user.store') }}`)" class="btn btn-primary"><i
                             class="fas fa-plus-circle"></i> Tambah</button>
                 </x-slot>
                 <x-table>
                     <x-slot name="thead">
                         <th width="5%">No</th>
-                        <th>Kode Barang</th>
-                        <th>Nama Barang</th>
-                        <th>Kategori</th>
-                        <th>Satuan</th>
-                        <th>Harga Beli</th>
-                        <th>Harga Jual</th>
-                        <th>Diskon</th>
-                        <th>Stok</th>
+                        <th>Nama</th>
+                        <th>Email</th>
+                        <th>Telepon</th>
+                        <th>Alamat</th>
+                        <th>Foto</th>
+                        <th>Status</th>
                         <th width="10%"><i class="fas fa-cog"></i></th>
                     </x-slot>
                 </x-table>
             </x-card>
         </div>
     </div>
-    @includeIf('produk.form')
+    @includeIf('user_crud.form')
 
 @endsection
 
 @includeIf('includes.datatables')
-@includeIf('includes.jquery-mask')
-@includeIf('includes.select2')
 
 @push('script')
     <script>
         let modal = '#modal-form';
         let table;
 
-        $(document).ready(function() {
-            $('.satuanform').select2();
-            $('.kategoriform').select2();
-            inputMask();
-        });
 
         table = $('.table').DataTable({
             processing: true,
             autoWidth: false,
             ajax: {
-                url: '{{ route('produk.data') }}',
-                data: function(d) {
-                    d.kategori = $('[name=kategori2]').val();
-                    d.satuan = $('[name=satuan2]').val();
-                },
+                url: '{{ route('user.data') }}',
             },
             columns: [{
                     data: 'DT_RowIndex',
                     searchable: false,
+                },
+                {
+                    data: 'name'
+                },
+                {
+                    data: 'email'
+                },
+                {
+                    data: 'telepon'
+                },
+                {
+                    data: 'alamat'
+                },
+                {
+                    data: 'foto',
+                    searchable: false,
                     sortable: false,
                 },
                 {
-                    data: 'kode_barang'
-                },
-                {
-                    data: 'nama_barang'
-                },
-                {
-                    data: 'kategori'
-                },
-                {
-                    data: 'satuan'
-                },
-                {
-                    data: 'harga_beli'
-                },
-                {
-                    data: 'harga_jual'
-                },
-                {
-                    data: 'diskon'
-                },
-                {
-                    data: 'stok'
+                    data: 'status',
+                    searchable: false,
+                    sortable: false,
                 },
                 {
                     data: 'action',
@@ -129,27 +83,55 @@
             ]
         });
 
+        function checkswitch(go, url) {
+            if ($('.status-' + parseInt(go)).is(":checked")) {
+                console.log(url);
+                $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: url,
+                        method: 'POST',
+                        data: {
+                            status: 'Aktif'
+                        },
+                    }).done(response => {
+                        $('.status').prop("checked", false);
+                        showAlert(response.message, 'success');
+                        table.ajax.reload();
+                    })
+                    .fail(errors => {
+                        if (errors.status === 422) {
+                            loopErrors(errors.responseJSON.errors);
+                            showAlert(errors.responseJSON.errors.message, 'danger');
+                            return;
+                        }
+                    });
+            } else if (!$('.status-' + parseInt(go)).is(":checked")) {
 
-        function inputMask() {
-            $('#harga_beli').mask('#.##0', {
-                reverse: true
-            });
-            $('#harga_jual').mask('#.##0', {
-                reverse: true
-            });
-            $('#diskon').mask('#.##0', {
-                reverse: true
-            });
+                $.ajax({
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        url: url,
+                        method: 'POST',
+                        data: {
+                            status: 'NonAktif'
+                        },
+                    }).done(response => {
+                        $('.status').prop("checked");
+                        showAlert(response.message, 'success');
+                        table.ajax.reload();
+                    })
+                    .fail(errors => {
+                        if (errors.status === 422) {
+                            loopErrors(errors.responseJSON.errors);
+                            showAlert(errors.responseJSON.errors.message, 'danger');
+                            return;
+                        }
+                    });
+            }
         }
-
-        $('[name=kategori2]').on('change', function() {
-            table.ajax.reload();
-        });
-
-        $('[name=satuan2]').on('change', function() {
-
-            table.ajax.reload();
-        });
 
         function addForm(url, title = 'Tambah') {
             $(modal).modal('show');
@@ -161,6 +143,7 @@
         }
 
         function editForm(url, title = 'Edit') {
+            $('.senyap').hide();
             $.get(url)
                 .done(response => {
                     $(modal).modal('show');
@@ -252,11 +235,6 @@
             }
         }
 
-        function refresh_table() {
-            $('[name=kategori2]').prop("selectedIndex", 0);
-            $('[name=satuan2]').prop("selectedIndex", 0);
-            table.ajax.reload();
-        }
 
 
         function showAlert(message, type) {
