@@ -95,7 +95,7 @@
                 <a href="{{ route('profil.index') }}" class="nonaktif">Profil Setting</a>
             </li>
             <li class="nav-item" role="presentation">
-                <a href="{{ route('reset.index') }}" class="aktif">Reset Password</a>
+                <a href="{{ route('reset.index') }}" class="aktif">Ubah Password</a>
             </li>
             <li class="nav-item" role="presentation">
                 <a href="#" class="nonaktif">About Setting</a>

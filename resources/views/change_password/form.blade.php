@@ -7,17 +7,16 @@
             <h5 style="font-weight: 500">Masukan password akunmu saat ini untuk mengganti password yang baru!</h5>
         </div>
     </div>
-    </div>
     <div class="garis"></div>
 
     <div class="row" style="margin-bottom: 30px;">
-        <div class="col-lg-6">
+        <div class="col-lg-4">
             <div style="width: 70%" class="tepi">
                 <p class="font-weight-bold">Password Lama</p>
             </div>
 
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-8">
             <div class="form-group" style="width: 85%">
                 <input type="password" name="password_lama"
                     class="form-control @error('password_lama') is-invalid @enderror" id="password_lama"
@@ -33,13 +32,13 @@
 
 
     <div class="row" style="margin-top: 30px; margin-bottom: 30px;">
-        <div class="col-lg-6">
+        <div class="col-lg-4">
             <div style="width: 70%" class="tepi">
                 <p class="font-weight-bold">Password Baru</p>
             </div>
 
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-8">
             <div class="form-group" style="width: 85%">
                 <input type="password" name="password" class="form-control @error('password') is-invalid @enderror"
                     id="password" placeholder="Password Baru" value="{{ old('password') }}">
@@ -53,13 +52,13 @@
     </div>
 
     <div class="row" style="margin-top: 30px;">
-        <div class="col-lg-6">
+        <div class="col-lg-4">
             <div style="width: 70%" class="tepi">
                 <p class="font-weight-bold">Konfirmasi Password</p>
             </div>
 
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-8">
             <div class="form-group" style="width: 85%">
                 <input type="password" name="password_confirmation"
                     class="form-control @error('password_confirmation') is-invalid @enderror" id="password_confirmation"
