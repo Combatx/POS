@@ -16,10 +16,10 @@ class CreatePengirimanTable extends Migration
         Schema::create('pengiriman', function (Blueprint $table) {
             $table->increments('id_pengiriman');
             $table->unsignedInteger('id_penjualan');
-            $table->unsignedBigInteger('id_user');
-            $table->string('penerima');
+            $table->unsignedBigInteger('id_user')->nullable();
+            $table->string('penerima')->nullable();
             $table->enum('status', ['diantar', 'success']);
-            $table->string('petugas_pengiriman');
+            $table->string('petugas_pengiriman')->nullable();
             $table->timestamps();
         });
     }

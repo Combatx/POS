@@ -31,6 +31,7 @@
 @endsection
 
 @includeIf('includes.datatables')
+@includeIf('includes.sweetalert2')
 
 @push('script')
     <script>
@@ -99,7 +100,7 @@
                 })
                 .done(response => {
                     $(modal).modal('hide');
-                    showAlert(response.message, 'success');
+                    sweetalertku(response.message, 'success');
                     table.ajax.reload();
                 })
                 .fail(errors => {
@@ -112,19 +113,30 @@
         }
 
         function deleteData(url) {
-            if (confirm('Yakin data akan di hapus?')) {
-                $.post(url, {
-                        '_method': 'delete'
-                    })
-                    .done(response => {
-                        showAlert(response.message, 'success');
-                        table.ajax.reload();
-                    })
-                    .fail(errors => {
-                        showAlert('Tidak dapat menghapus data', 'danger');
-                        return;
-                    });
-            }
+            Swal.fire({
+                title: 'Delete',
+                text: "Apakah Kamu Ingin Menghapus Data Ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Hapus'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post(url, {
+                            '_method': 'delete'
+                        })
+                        .done(response => {
+                            //showAlert(response.message, 'success');
+                            sweetalertku(response.message, 'success');
+                            table.ajax.reload();
+                        })
+                        .fail(errors => {
+                            showAlert('Tidak dapat menghapus data', 'danger');
+                            return;
+                        });
+                }
+            });
         }
 
         function resetForm(selector) {
@@ -186,5 +198,14 @@
                 submitForm(this.form);
             }
         });
+
+        function sweetalertku(message, type) {
+            Swal.fire({
+                title: 'Berhasil',
+                text: message,
+                icon: type,
+                confirmButtonText: 'OK'
+            })
+        }
     </script>
 @endpush

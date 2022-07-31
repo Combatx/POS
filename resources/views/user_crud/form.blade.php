@@ -35,6 +35,15 @@
                 <label for="alamat">Alamat</label>
                 <textarea name="alamat" class="form-control" id="alamat" rows="4"></textarea>
             </div>
+            <div class="form-group">
+                <label for="role_id">Role</label>
+                <select name="role_id" id="role_id" class="custom-select select2class" onclick="">
+                    <option disabled selected>Pilih Salah Satu</option>
+                    @foreach ($role as $item)
+                        <option value="{{ $item->id_roles }}">{{ $item->nama }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
 
     </div>

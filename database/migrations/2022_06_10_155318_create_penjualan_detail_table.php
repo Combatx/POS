@@ -23,7 +23,7 @@ class CreatePenjualanDetailTable extends Migration
             $table->integer('jumlah');
             $table->integer('diskon');
             $table->integer('subtotal');
-            $table->enum('dikirim', ['ya', 'tidak']);
+            $table->enum('dikirim', ['ya', 'tidak'])->default('tidak');
             $table->timestamps();
         });
     }

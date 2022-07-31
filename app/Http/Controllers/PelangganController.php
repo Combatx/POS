@@ -52,8 +52,7 @@ class PelangganController extends Controller
 
         $validator = Validator::make($request->all(), [
             'nama' => 'required|min:2|unique:pelanggan,nama',
-            'alamat' => 'required|min:2',
-            'telepon' => 'min:2|numeric',
+            'alamat' => 'required',
         ]);
 
         if ($validator->fails()) {

@@ -9,6 +9,7 @@
     <div class="modal-dialog {{ isset($size) ? $size : 'modal-lg' }}">
         <div class="modal-content">
             <form method="post">
+                {{-- @csrf --}}
                 @isset($title)
                     <div class="modal-header">
                         <h5 class="modal-title">{{ $title }}</h5>

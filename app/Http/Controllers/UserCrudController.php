@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Role;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -12,7 +13,8 @@ class UserCrudController extends Controller
     public function index()
     {
         $appname = Setting::first()->value('nama_app');
-        return view('user_crud.index', compact('appname'));
+        $role = Role::orderBy('nama', 'asc')->get();
+        return view('user_crud.index', compact('appname', 'role'));
     }
 
     public function data()
@@ -46,6 +48,9 @@ class UserCrudController extends Controller
             class="fa fa-edit"></i></button>
             <button class="btn btn-link text-danger" onclick="deleteData(`' . route('user.destroy', $query->id) . '`)"><i class="fas fa-trash"></i></button>';
             })
+            ->addColumn('role', function ($query) {
+                return $query->role->nama;
+            })
             ->rawColumns(['action', 'status', 'foto'])
             ->make(true);
     }
@@ -59,6 +64,7 @@ class UserCrudController extends Controller
             'password' => 'required|min:8',
             'password_confirmation' => 'required|min:8|same:password',
             'alamat' => '',
+            'role_id' => 'required|numeric|min:1',
         ]);
 
         if ($validator->fails()) {
@@ -71,8 +77,9 @@ class UserCrudController extends Controller
         $user->telepon = $request->telepon;
         $user->password = bcrypt($request->password);
         $user->alamat = $request->alamat;
-        $user->role_id = 1;
         $user->foto = 'img/user1.png';
+        $user->role_id = $request->role_id;
+        $user->status = 'NonAktif';
         $user->save();
 
         return response()->json(['data' => $user, 'message' => 'User berhasil ditambahkan!']);
@@ -90,6 +97,7 @@ class UserCrudController extends Controller
             'email' => 'required|email|min:2|unique:users,email,' . $user->id . ',id',
             'telepon' => 'required|min:2',
             'alamat' => '',
+            'role_id' => 'required|numeric|min:1',
         ]);
 
         if ($validator->fails()) {
@@ -102,7 +110,7 @@ class UserCrudController extends Controller
         $user->telepon = $request->telepon;
         //$user->password = bcrypt($request->password);
         $user->alamat = $request->alamat;
-        //$user->role_id = 1;
+        $user->role_id = $request->role_id;
         //$user->foto = 'img/user1.png';
         $user->save();
 

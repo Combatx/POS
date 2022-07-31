@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pelanggan;
 use App\Models\Penjualan;
 use App\Models\PenjualanDetail;
 use App\Models\Produk;
@@ -15,10 +16,11 @@ class PenjualanDetailController extends Controller
         $produk = Produk::orderBy('nama_barang')->get();
         $diskon = Setting::first()->diskon ?? 0;
         $appname = Setting::first()->value('nama_app');
+        $pelanggan = Pelanggan::orderBy('created_at', 'desc');
 
         if ($id_penjualan = session('id_penjualan')) {
             $penjualan = Penjualan::find($id_penjualan);
-            return view('penjualan_detail.index', compact('produk', 'diskon', 'penjualan', 'id_penjualan', 'appname'));
+            return view('penjualan_detail.index', compact('produk', 'diskon', 'penjualan', 'id_penjualan', 'appname', 'pelanggan'));
         } else {
             if (auth()->user()->level == 1) {
                 return redirect()->route('transaksi.baru', compact('setting'));
@@ -45,6 +47,17 @@ class PenjualanDetailController extends Controller
             $row['harga_jual'] = 'Rp. ' . format_uang($item->harga_jual);
             $row['jumlah'] = '<input type="number" class="form-control quantity input-sm" data-id="' . $item->id_penjualan_detail . '" value="' . $item->jumlah . '">';;
             // $row['diskon'] = $item->diskon . ' %';
+            if ($item->dikirim == 'ya') {
+                $row['dikirim'] = '<div class="custom-control custom-switch">
+                <input type="checkbox" name="dikirim" class="custom-control-input dikirim-' . $item->id_penjualan_detail . '" id="dikirim-' . $item->id_penjualan_detail . '" checked onclick="pengiriman(' . $item->id_penjualan_detail . ',`' . route('transaksi.cekkirim', $item->id_penjualan_detail) . '`)">
+                <label class="custom-control-label font-weight-normal" for="dikirim-' . $item->id_penjualan_detail . '">Ya</label>
+              </div>';
+            } elseif ($item->dikirim == 'tidak') {
+                $row['dikirim'] = '<div class="custom-control custom-switch">
+                <input type="checkbox" name="dikirim" class="custom-control-input dikirim-' . $item->id_penjualan_detail . '" id="dikirim-' . $item->id_penjualan_detail . '" onclick="pengiriman(' . $item->id_penjualan_detail . ',`' . route('transaksi.cekkirim', $item->id_penjualan_detail) . '`)">
+                <label class="custom-control-label font-weight-normal" for="dikirim-' . $item->id_penjualan_detail . '">Tidak</label>
+              </div>';
+            }
             $row['subtotal'] = 'Rp. ' . format_uang($item->subtotal);
             $row['aksi'] = '<div class="btn-group">
                             <button onclick="deleteData(`' . route('transaksi.destroy', $item->id_penjualan_detail) . '`)" class="btn btn-xs btn-danger btn-flat"><i class="fa fa-trash"></i></button>
@@ -62,6 +75,7 @@ class PenjualanDetailController extends Controller
             'harga_jual' => '',
             'jumlah' => '',
             // 'diskon' => '',
+            'dikirim' => '',
             'subtotal' => '',
             'aksi' => '',
         ];
@@ -70,17 +84,25 @@ class PenjualanDetailController extends Controller
         return datatables()
             ->of($data)
             ->addIndexColumn()
-            ->rawColumns(['aksi', 'kode_barang', 'jumlah'])
+            ->rawColumns(['aksi', 'kode_barang', 'jumlah', 'dikirim'])
             ->make(true);
     }
 
     public function store(Request $request)
     {
-        // return "ff";
-        $produk = Produk::where('id_produk', $request->id_produk)->first();
-        if (!$produk) {
-            return response()->json('Data gagal disimpan', 400);
+        if ($request->cekkondisi == 'pilihbarang') {
+            $produk = Produk::where('id_produk', $request->id_produk)->first();
+            if (!$produk) {
+                return response()->json('Data gagal disimpan', 400);
+            }
+        } elseif ($request->cekkondisi == 'cekkode') {
+            $produk = Produk::where('kode_barang', $request->kode_barang)->first();
+            if (!$produk) {
+                return response()->json('Data gagal disimpan', 400);
+            }
         }
+        // return "ff";
+
 
         $detail = new PenjualanDetail();
         $detail->id_penjualan = $request->id_penjualan;
@@ -124,5 +146,29 @@ class PenjualanDetailController extends Controller
         ];
 
         return response()->json($data);
+    }
+
+    public function pelanggan()
+    {
+        $query = Pelanggan::orderBy('id_pelanggan', 'desc')->get();
+
+        return datatables($query)
+            ->addIndexColumn()
+            ->addColumn('action', function ($query) {
+                return '
+            <button type="button" onclick="getpelanggan(`' . $query->nama . '`,' . $query->id_pelanggan . ')" class="btn btn-primary btn-sm">Pilih <i class="fas fa-check"></i></i></button>';
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+    }
+    public function cekkirim($id, Request $request)
+    {
+        //@dd($request->dikirim);
+        $cekkirim = PenjualanDetail::findOrFail($id);
+        $cekkirim->dikirim = $request->dikirim;
+        $cekkirim->save();
+
+        //return response()->json(['data' => $kategori, 'message' => 'Kategori berhasil ditambahkan!']);
+        return response()->json(['message' => 'Data berhasil di Simpan'], 200);
     }
 }

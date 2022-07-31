@@ -23,6 +23,7 @@
                         <th>Email</th>
                         <th>Telepon</th>
                         <th>Alamat</th>
+                        <th>Role</th>
                         <th>Foto</th>
                         <th>Status</th>
                         <th width="10%"><i class="fas fa-cog"></i></th>
@@ -36,11 +37,16 @@
 @endsection
 
 @includeIf('includes.datatables')
+@includeIf('includes.select2')
 
 @push('script')
     <script>
         let modal = '#modal-form';
         let table;
+
+        $(document).ready(function() {
+            $('.select2class').select2();
+        });
 
 
         table = $('.table').DataTable({
@@ -71,6 +77,9 @@
                     sortable: false,
                 },
                 {
+                    data: 'role',
+                },
+                {
                     data: 'status',
                     searchable: false,
                     sortable: false,
@@ -82,6 +91,7 @@
                 },
             ]
         });
+
 
         function checkswitch(go, url) {
             if ($('.status-' + parseInt(go)).is(":checked")) {
@@ -134,6 +144,7 @@
         }
 
         function addForm(url, title = 'Tambah') {
+            $('.senyap').show();
             $(modal).modal('show');
             $(`${modal} .modal-title`).text(title);
             $(`${modal} form`).attr('action', url);

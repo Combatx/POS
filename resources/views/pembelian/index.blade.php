@@ -122,7 +122,7 @@
 
         function addForm(url) {
             //$('#modal-supplier').modal('show');
-            get
+            //get
         }
 
         function showDetail(url) {

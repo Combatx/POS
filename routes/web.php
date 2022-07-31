@@ -6,6 +6,7 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PembelianDetailController;
+use App\Http\Controllers\PengirimanController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\PenjualanDetailController;
 use App\Http\Controllers\ProdukController;
@@ -56,8 +57,8 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::post('/user/status/{id}', [UserCrudController::class, 'status'])->name('user.status');
     Route::resource('/user', UserCrudController::class);
 
-    Route::get('/role/data', [RoleController::class, 'data'])->name('role.data');
-    Route::resource('/role', RoleController::class);
+    // Route::get('/role/data', [RoleController::class, 'data'])->name('role.data');
+    // Route::resource('/role', RoleController::class);
 });
 
 
@@ -71,9 +72,6 @@ Route::group(['middleware' => ['auth', 'role:gudang']], function () {
 
     Route::get('/supplier/data', [SupplierController::class, 'data'])->name('supplier.data');
     Route::resource('/supplier', SupplierController::class);
-
-    Route::get('/pelanggan/data', [PelangganController::class, 'data'])->name('pelanggan.data');
-    Route::resource('/pelanggan', PelangganController::class);
 
     Route::get('/produk/data', [ProdukController::class, 'data'])->name('produk.data');
     Route::resource('/produk', ProdukController::class);
@@ -90,6 +88,10 @@ Route::group(['middleware' => ['auth', 'role:gudang']], function () {
 });
 
 Route::group(['middleware' => ['auth', 'role:kasir']], function () {
+
+    Route::get('/pelanggan/data', [PelangganController::class, 'data'])->name('pelanggan.data');
+    Route::resource('/pelanggan', PelangganController::class);
+
     Route::get('/penjualan/data', [PenjualanController::class, 'data'])->name('penjualan.data');
     Route::get('/penjualan', [PenjualanController::class, 'index'])->name('penjualan.index');
     Route::get('/penjualan/{id}', [PenjualanController::class, 'show'])->name('penjualan.show');
@@ -101,8 +103,16 @@ Route::group(['middleware' => ['auth', 'role:kasir']], function () {
     Route::get('transaksi/nota-kecil', [PenjualanController::class, 'notaKecil'])->name('transaksi.nota_kecil');
     Route::get('transaksi/nota-besar', [PenjualanController::class, 'notaBesar'])->name('transaksi.nota_besar');
 
+    Route::post('transaksi/cekkirim/{id}', [PenjualanDetailController::class, 'cekkirim'])->name('transaksi.cekkirim');
+    Route::get('transaksi/pelanggan/data', [PenjualanDetailController::class, 'pelanggan'])->name('transaksi.pelanggan');
     Route::get('transaksi/{id}/data', [PenjualanDetailController::class, 'data'])->name('transaksi.data');
     Route::get('transaksi/loadform/{id}/{total}/{diterima}', [PenjualanDetailController::class, 'loadForm'])->name('transaksi.load_form');
     Route::resource('/transaksi', PenjualanDetailController::class)
         ->except('show');
+
+    Route::get('pengiriman/data', [PengirimanController::class, 'data'])->name('pengiriman.data');
+    Route::get('pengiriman/printsj/{id}', [PengirimanController::class, 'printsj'])->name('pengiriman.printsj');
+    Route::get('pengiriman/detail/bio/{id}', [PengirimanController::class, 'bio'])->name('pengiriman.bio');
+    Route::get('pengiriman/detail/data/{id}', [PengirimanController::class, 'detail'])->name('pengiriman.detail');
+    Route::resource('/pengiriman', PengirimanController::class);
 });

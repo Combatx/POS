@@ -29,8 +29,7 @@
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                 data-accordion="false">
                 <li class="nav-item">
-                    <a href="{{ route('dashboard.index') }}"
-                        class="nav-link {{ request()->is('/*') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard.index') }}" class="nav-link {{ request()->is('/*') ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
                             Dashboard
@@ -75,14 +74,15 @@
                             </p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{ route('pelanggan.index') }}"
-                            class="nav-link {{ request()->is('pelanggan*') ? 'active' : '' }}">
-                            <i class="fas fa-users"></i>
-                            <p>
-                                Pelanggan
-                            </p>
-                        </a>
+                @endif
+                @if (auth()->user()->hasRole('kasir'))
+                    <a href="{{ route('pelanggan.index') }}"
+                        class="nav-link {{ request()->is('pelanggan*') ? 'active' : '' }}">
+                        <i class="fas fa-users"></i>
+                        <p>
+                            Pelanggan
+                        </p>
+                    </a>
                     </li>
                 @endif
 
@@ -129,7 +129,26 @@
                             </p>
                         </a>
                     </li>
+
+                    <li class="nav-item">
+                        <a href="{{ route('pengiriman.index') }}"
+                            class="nav-link {{ request()->is('pengiriman*') ? 'active' : '' }}">
+                            <i class="fas fa-store"></i>
+                            <p>
+                                Pengiriman
+                            </p>
+                        </a>
+                    </li>
                 @endif
+                <li class="nav-item">
+                    <a href="{{ route('penjualan.index') }}"
+                        class="nav-link {{ request()->is('penjualan*') ? 'active' : '' }}">
+                        <i class="fas fa-store"></i>
+                        <p>
+                            Daftar Penjualan
+                        </p>
+                    </a>
+                </li>
                 @if (auth()->user()->hasRole('admin'))
                     <li class="nav-header">Konfigurasi</li>
                     <li class="nav-item">
@@ -155,7 +174,7 @@
                         </a>
                     </li>
                     {{-- @endif --}}
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a href="{{ route('role.index') }}"
                             class="nav-link {{ request()->is('role') ? 'active' : '' }} ? 'active' : '' }}">
                             <i class="fas fa-user-tag"></i>
@@ -163,7 +182,7 @@
                                 Role
                             </p>
                         </a>
-                    </li>
+                    </li> --}}
                 @endif
                 <br>
                 <br>

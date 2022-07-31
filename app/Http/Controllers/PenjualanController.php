@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pengiriman;
 use App\Models\Penjualan;
 use App\Models\PenjualanDetail;
 use App\Models\Produk;
@@ -106,6 +107,7 @@ class PenjualanController extends Controller
 
     public function store(Request $request)
     {
+
         $diskon = str_replace('.', '', $request->diskon);
         $diterima = str_replace('.', '', $request->diterima);
         $penjualan = Penjualan::findOrFail($request->id_penjualan);
@@ -114,6 +116,7 @@ class PenjualanController extends Controller
         $penjualan->diskon = $diskon;
         $penjualan->bayar = $request->bayar;
         $penjualan->diterima = $diterima;
+        $penjualan->id_pelanggan = $request->id_pelanggan;
         $penjualan->update();
 
         $detail = PenjualanDetail::where('id_penjualan', $penjualan->id_penjualan)->get();
@@ -124,10 +127,28 @@ class PenjualanController extends Controller
             $produk->update();
         }
 
+        $penjualan_pengiriman = PenjualanDetail::where('id_penjualan', $request->id_penjualan)->where('dikirim', 'ya')->get();
+
+        if ($penjualan_pengiriman->count() != 0) {
+            $pengiriman =  Pengiriman::create([
+                'id_penjualan' => $request->id_penjualan,
+                'status' => 'diantar',
+            ]);
+            // foreach ($detail as $item) {
+            //     $detailkirim = 
+            //     $produk->update();
+            // }
+
+            $detailkirim = PenjualanDetail::where('id_penjualan', $request->id_penjualan)
+                ->update([
+                    'id_pengiriman' => $pengiriman->id_pengiriman
+                ]);
+        }
         $penjualankosong = Penjualan::where('total_item', '=', 0)
             ->where('total_harga', '=', 0)
             ->where('bayar', '=', 0)
             ->get();
+
         if ($penjualankosong->count() != 0) {
             foreach ($penjualankosong as $item) {
                 $delete_detail = PenjualanDetail::where('id_penjualan', $item->id_penjualan)->delete();
