@@ -140,15 +140,6 @@
                         </a>
                     </li>
                 @endif
-                <li class="nav-item">
-                    <a href="{{ route('penjualan.index') }}"
-                        class="nav-link {{ request()->is('penjualan*') ? 'active' : '' }}">
-                        <i class="fas fa-store"></i>
-                        <p>
-                            Daftar Penjualan
-                        </p>
-                    </a>
-                </li>
                 @if (auth()->user()->hasRole('admin'))
                     <li class="nav-header">Konfigurasi</li>
                     <li class="nav-item">
