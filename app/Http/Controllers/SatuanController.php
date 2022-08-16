@@ -98,8 +98,6 @@ class SatuanController extends Controller
      */
     public function update(Request $request, Satuan $satuan)
     {
-
-
         $validator = Validator::make($request->all(), [
             'nama' => 'required|min:2|unique:satuan,nama,' . $satuan->id_satuan . ',id_satuan',
         ]);
