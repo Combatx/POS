@@ -83,7 +83,9 @@
                             <div class="input-group">
                                 <input type="hidden" name="id_pembelian" id="id_pembelian" value="{{ $id_pembelian }}">
                                 <input type="hidden" name="id_produk" id="id_produk">
-                                <input type="text" class="form-control" name="kode_barang" id="kode_barang">
+                                <input type="text" class="form-control" name="kode_barang" id="kode_barang"
+                                    oninput="cekkodebarang()">
+                                <input type="hidden" name="cekkondisi" id="cekkondisi">
                                 <span class="input-group-btn">
                                     <button onclick="tampilProduk()" class="btn btn-info btn-flat" type="button"><i
                                             class="fa fa-arrow-right"></i></button>
@@ -158,6 +160,7 @@
 @includeIf('includes.datatables')
 @includeIf('includes.jquery-mask')
 @includeIf('includes.select2')
+@includeIf('includes.sweetalert2')
 
 @push('script')
     <script>
@@ -208,34 +211,52 @@
 
             table2 = $('.table-produk').DataTable();
 
+
+            $(document).on('click', '.quantity', function() {
+                $(this).select();
+            });
+
             $(document).on('input', '.quantity', function() {
-                let id = $(this).data('id');
+                // console.log($(this).val());
                 let jumlah = parseInt($(this).val());
+                // jumlah.select();
+                let id = $(this).data('id');
 
                 if (jumlah < 1) {
                     $(this).val(1);
-                    alert('Jumlah tidak boleh kurang dari 1');
+                    sweetalertku('Jumlah tidak boleh kurang dari 1', 'error', 'error');
+                    // alert('Jumlah tidak boleh kurang dari 1');
                     return;
                 }
                 if (jumlah > 10000) {
-                    alert('Jumlah tidak boleh lebih dari 10000');
+                    sweetalertku('Jumlah tidak boleh lebih dari 10000', 'error', 'error');
+                    // alert('Jumlah tidak boleh lebih dari 10000');
                     $(this).val(1000);
                     return;
                 }
-
+                // setTimeout(function() {
                 $.post(`{{ url('/pembelian_detail') }}/${id}`, {
                         '_token': $('[name=csrf-token]').attr('content'),
                         '_method': 'put',
                         'jumlah': jumlah,
                     })
                     .done(response => {
-                        $(this).on('mouseout', function() {
-                            table.ajax.reload(() => loadForm($('#diskon').cleanVal()));
-                        })
+                        // $(this).on('mouseout', function() {
+                        table.ajax.reload(() => loadForm($('#diskon')
+                            .cleanVal()));
+                        $('#kode_barang').focus();
                     }).fail(errors => {
-                        alert('Tidak dapat menyimpan data?');
+                        sweetalertku('Terjadi Kesalahan, Tidak dapat Menyimpan Data',
+                            'error',
+                            'error');
+                        $('#kode_barang').focus();
                         return;
                     });
+                // }, 1000);
+            });
+
+            $(document).on('click', '#diskon', function() {
+                $(this).select();
             });
 
             $(document).on('input', '#diskon', function() {
@@ -294,9 +315,10 @@
                     document.getElementById("supplier_alamat").innerHTML = response.alamat;
                     $('#id_supplier').val(response.id_supplier);
                     $('#modal-supplier').modal('hide');
+                    $('#kode_barang').focus();
                 })
                 .fail(errors => {
-                    alert('tidak dapat menampilkan data supplier');
+                    sweetalertku('Tidak Dapat Mendapatkan Data Supplier', 'error', 'error');
                 })
         }
 
@@ -314,9 +336,18 @@
             $('#modal-produk').modal('hide');
         }
 
+        // function blokall() {
+        //     // $('.quantity').on('click', function() {
+        //     console.log('fff');
+        //     $(this).select();
+        //     // });
+        // }
+
+
         function pilihProduk(id, kode) {
             $('#id_produk').val(id);
-            $('#kode_barang').val(kode);
+            // $('#kode_barang').val(kode);
+            $('#cekkondisi').val('pilihbarang');
             hideProduk();
             tambahProduk();
         }
@@ -326,28 +357,62 @@
                 .done(response => {
                     $('#kode_barang').focus();
                     table.ajax.reload(() => loadForm($('#diskon').cleanVal()));
+                    $('#kode_barang').val('');
+                    $('#kode_barang').focus();
                 })
                 .fail(errors => {
-                    alert('Tidak dapat menyimpan data');
+                    if (errors.responseJSON.cek == 'fail') {
+                        sweetalertku(errors.responseJSON.message, 'error', 'error');
+                        // $('#kode_barang').val('');
+                        $('#kode_barang').focus();
+                    } else {
+                        sweetalertku('Tidak dapat menyimpan data', 'error', 'error');
+                        // $('#kode_barang').val('');
+                        $('#kode_barang').focus();
+                    }
                     return;
                 });
         }
 
         function deleteData(url) {
-            if (confirm('Apakah anda yakin ingin menghapus data?')) {
-                // event.preventDefault();
-                $.post(url, {
-                        '_token': $('[name=csrf-token]').attr('content'),
-                        '_method': 'delete'
-                    })
-                    .done((response) => {
-                        table.ajax.reload(() => loadForm($('#diskon').cleanVal()));
-                    })
-                    .fail((errors) => {
-                        alert('Tidak dapat menyimpan data');
-                        return;
-                    });
+            Swal.fire({
+                title: 'Delete',
+                text: "Apakah Kamu Ingin Menghapus Data Ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Hapus'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // event.preventDefault();
+                    $.post(url, {
+                            '_token': $('[name=csrf-token]').attr('content'),
+                            '_method': 'delete'
+                        })
+                        .done((response) => {
+                            sweetalertku('Data Berhasil Di Hapus', 'success', 'success');
+                            table.ajax.reload(() => loadForm($('#diskon').cleanVal()));
+                            $('#kode_barang').focus();
+                        })
+                        .fail((errors) => {
+                            sweetalertku('Tidak dapat Menyimpan Data', 'error', 'error');
+                            $('#kode_barang').focus();
+                            return;
+                        });
+                }
+            });
+        }
+
+        function cekkodebarang() {
+            $('#id_produk').val(null);
+            $('#cekkondisi').val('cekkode');
+            if ($('#kode_barang').val() == '') {
+                return;
+            } else {
+                tambahProduk();
             }
+            // preventDefault();
         }
 
         function loadForm(diskon = 0) {
@@ -364,14 +429,14 @@
 
                 })
                 .fail(errors => {
-                    alert('Tidak dapat menampikan data');
+                    sweetalertku('Tidak dapat Menampilkan Data', 'error', 'error');
                     return;
                 })
         }
 
         function ceksupplier() {
             if ($('#id_supplier').val() == '' || $('#id_supplier').val() == null) {
-                alert('Pilih Supplier terlebih Dahulu !!');
+                sweetalertku('Pilih Supplier Terlibih Dahulu !!!', 'error', 'error');
                 preventDefault();
             }
             return;
@@ -384,6 +449,15 @@
 
         function refreshsupplier() {
             tablesupplier.ajax.reload();
+        }
+
+        function sweetalertku(message, title, type) {
+            Swal.fire({
+                title: title,
+                text: message,
+                icon: type,
+                confirmButtonText: 'OK'
+            })
         }
     </script>
 @endpush

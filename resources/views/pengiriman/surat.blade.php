@@ -221,7 +221,7 @@
                 <span style="padding-left: 65px"> ) </span>
             </div>
         </div>
-        <div class="sejajar" style="margin-left: 40%; border: 1px solid black;">
+        {{-- <div class="sejajar" style="margin-left: 40%; border: 1px solid black;">
             <div class="penerima">
                 <div style="padding-bottom: 5px"> </div>
                 <span style="padding-left: 20px; padding-right: 15;">Petugas
@@ -230,8 +230,19 @@
                 <br>
                 <br>
                 <br>
-                <span style="padding-left: 10px;">( </span>
-                <span style="padding-left: 115px;"> ) </span><br>
+                <span style="text-align: center;">( {{ $pengiriman->petugas_pengiriman }} )</span>
+                <div style="padding-top:10px"></div>
+            </div>
+        </div> --}}
+        <div class="sejajar" style="margin-left: 40%; border: 1px solid black; width: 150px;">
+            <div class="penerima" style="text-align: center;">
+                <div style="padding-bottom: 5px"> </div>
+                <span>Petugas Pengiriman</span>
+                <div style="border-bottom: 1px solid black; padding-top:5px;"></div>
+                <br>
+                <br>
+                <br>
+                <span style="text-align: center;">( {{ $pengiriman->petugas_pengiriman }} )</span>
                 <div style="padding-top:10px"></div>
             </div>
         </div>

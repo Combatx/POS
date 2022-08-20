@@ -100,6 +100,15 @@
                             </p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('barangkeluar.index') }}"
+                            class="nav-link {{ request()->is('barangkeluar*') || request()->is('barang_keluar_detail*') ? 'active' : '' }}">
+                            <i class="fas fa-box-open"></i>
+                            <p>
+                                Barang Keluar
+                            </p>
+                        </a>
+                    </li>
                 @endif
                 @if (auth()->user()->hasRole('kasir'))
                     <li class="nav-item">
@@ -131,11 +140,34 @@
                     </li>
 
                     <li class="nav-item">
+                        <a href="{{ route('retur.index') }}"
+                            class="nav-link {{ request()->is('retur*') ? 'active' : '' }}">
+                            <i class="fas fa-exchange-alt"></i>
+                            <p>
+                                Retur
+                            </p>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
                         <a href="{{ route('pengiriman.index') }}"
                             class="nav-link {{ request()->is('pengiriman*') ? 'active' : '' }}">
-                            <i class="fas fa-store"></i>
+                            <i class="fas fa-truck"></i>
                             <p>
                                 Pengiriman
+                            </p>
+                        </a>
+                    </li>
+                @endif
+
+                @if (auth()->user()->hasRole('admin'))
+                    <li class="nav-header">Report</li>
+                    <li class="nav-item">
+                        <a href="{{ route('laporan.index') }}"
+                            class="nav-link {{ request()->is('laporan_pendapatan') ? 'active' : '' }} ? 'active' : '' }}">
+                            <i class="fas fa-money-bill"></i>
+                            <p>
+                                Laporan Pendapatan
                             </p>
                         </a>
                     </li>

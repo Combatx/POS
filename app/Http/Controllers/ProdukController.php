@@ -8,6 +8,7 @@ use App\Models\Satuan;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProdukController extends Controller
 {
@@ -105,7 +106,7 @@ class ProdukController extends Controller
         $kodeBarang = Kategori::where('id_kategori', $produk->id_kategori)->value('kode_kategori') . ($pisah + 1);
         $updateKode = Produk::where('id_produk', $produk->id_produk)
             ->update(['kode_barang' =>  $kodeBarang]);
-        return response()->json(['data' => $produk, 'message' => 'Produk berhasil ditambahkan!']);
+        return response()->json(['data' => $produk, 'message' => 'Produk berhasil ditambahkan!', 'type' => 'success']);
     }
 
     /**
@@ -159,7 +160,7 @@ class ProdukController extends Controller
         $data['diskon'] = str_replace('.', '', $data['diskon']);
 
         $produk->update($data);
-        return response()->json(['data' => $produk, 'message' => 'Produk berhasil diedit!']);
+        return response()->json(['data' => $produk, 'message' => 'Produk berhasil diedit!', 'type' => 'success']);
     }
 
     /**
@@ -171,6 +172,15 @@ class ProdukController extends Controller
     public function destroy(Produk $produk)
     {
         $produk->delete();
-        return response()->json(['data' => null, 'message' => 'Produk Berhasil dihapus!']);
+        return response()->json(['data' => null, 'message' => 'Produk Berhasil dihapus!', 'type' => 'success']);
+    }
+
+    public function cetak_barcode(Request $request)
+    {
+        $produk = Produk::where('id_produk', $request->kode)->first();
+        $no = 1;
+        $pdf = PDF::loadView('produk.barcode', compact('produk', 'no'));
+        $pdf->setPaper('a4', 'portait');
+        return $pdf->stream('barcode-' . $produk->nama_barang . '.pdf', array("Attachment" => 0));
     }
 }

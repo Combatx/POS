@@ -64,7 +64,7 @@ class SatuanController extends Controller
 
         $data = $request->only('nama');
         $satuan = Satuan::create($data);
-        return response()->json(['data' => $satuan, 'message' => 'Satuan berhasil ditambahkan!']);
+        return response()->json(['data' => $satuan, 'message' => 'Satuan berhasil ditambahkan!', 'type' => 'success']);
     }
 
     /**
@@ -110,7 +110,7 @@ class SatuanController extends Controller
         $data = $request->only('nama');
 
         $satuan->update($data);
-        return response()->json(['data' => $satuan, 'message' => 'Satuan berhasil diedit!']);
+        return response()->json(['data' => $satuan, 'message' => 'Satuan berhasil diedit!', 'type' => 'success']);
     }
 
     /**
@@ -122,6 +122,6 @@ class SatuanController extends Controller
     public function destroy(Satuan $satuan)
     {
         $satuan->delete();
-        return response()->json(['data' => null, 'message' => 'Satuan Berhasil dihapus!']);;
+        return response()->json(['data' => null, 'message' => 'Satuan Berhasil dihapus!', 'type' => 'success']);;
     }
 }

@@ -27,6 +27,7 @@
                     {{-- <button onclick="addForm(`{{ route('kategori.store') }}`)" class="btn btn-primary"><i
                             class="fas fa-plus-circle"></i> Tambah</button> --}}
                 </x-slot>
+                <input type="hidden" id="kodekirim">
                 <x-table class="table-pengiriman">
                     <x-slot name="thead">
                         <th width="5%">No</th>
@@ -46,10 +47,12 @@
     </div>
     @includeIf('pengiriman.form')
     @includeIf('pengiriman.detail')
+    @includeIf('pengiriman.cek_nama')
 
 @endsection
 
 @includeIf('includes.datatables')
+@includeIf('includes.sweetalert2')
 
 @push('script')
     <script>
@@ -155,19 +158,29 @@
         }
 
         function deleteData(url) {
-            if (confirm('Yakin data akan di hapus?')) {
-                $.post(url, {
-                        '_method': 'delete'
-                    })
-                    .done(response => {
-                        showAlert(response.message, 'success');
-                        table.ajax.reload();
-                    })
-                    .fail(errors => {
-                        showAlert('Tidak dapat menghapus data', 'danger');
-                        return;
-                    });
-            }
+            Swal.fire({
+                title: 'Delete',
+                text: "Apakah Kamu Ingin Menghapus Data Ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Hapus'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post(url, {
+                            '_method': 'delete'
+                        })
+                        .done(response => {
+                            showAlert(response.message, 'success');
+                            table.ajax.reload();
+                        })
+                        .fail(errors => {
+                            showAlert('Tidak dapat menghapus data', 'danger');
+                            return;
+                        });
+                }
+            });
         }
 
         function resetForm(selector) {
@@ -281,11 +294,61 @@
             }, 3000);
         }
 
+        function ceknama(kode) {
+            $.get(`{{ url('/pengiriman/ceknama') }}/${kode} `)
+                .done(response => {
+                    if (response.cek == 'ada') {
+                        location.href = response.hasil;
+                    } else if (response.cek == 'tidak') {
+                        $('#kodekirim').val(kode);
+                        $('#modal-cek_nama').modal('show');
+                    }
+                })
+                .fail(errors => {
+                    sweetalertku('Terjadi Kesalahan', 'error', 'error');
+                })
+        }
+
+        function simpan_pengirim() {
+            let kode = $('#kodekirim').val();
+            if ($('#nama_petugas').val() == '') {
+                sweetalertku('Field Nama Tidak Boleh Kosong !!', 'error', 'error');
+                return;
+            }
+
+            $.post(`{{ url('/pengiriman/simpankirim') }}/${kode}`, {
+                    '_token': $('[name=csrf-token]').attr('content'),
+                    '_method': 'put',
+                    'petugas': $('#nama_petugas').val(),
+                })
+                .done(response => {
+                    // $(this).on('mouseout', function() {
+                    if (response.cek == 'ada') {
+                        location.href = response.hasil;
+                    } else if (response.cek == 'tidak') {
+                        $('#kodekirim').val(kode);
+                        $('#modal-cek_nama').modal('show');
+                    }
+                }).fail(errors => {
+                    sweetalertku('Terjadi Kesalahan', 'error', 'error');
+                    return;
+                });
+        }
+
         $(".kategori").on("keypress", function(event) {
             if (event.key === "Enter") {
                 event.preventDefault();
                 submitForm(this.form);
             }
         });
+
+        function sweetalertku(message, title, type) {
+            Swal.fire({
+                title: title,
+                text: message,
+                icon: type,
+                confirmButtonText: 'OK'
+            })
+        }
     </script>
 @endpush

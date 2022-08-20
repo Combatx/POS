@@ -51,7 +51,7 @@ class PelangganController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|min:2|unique:pelanggan,nama',
+            'nama' => 'required|min:2',
             'alamat' => 'required',
         ]);
 
@@ -61,7 +61,7 @@ class PelangganController extends Controller
 
         $data = $request->all();
         $satuan = Pelanggan::create($data);
-        return response()->json(['data' => $satuan, 'message' => 'pelanggan berhasil ditambahkan!']);
+        return response()->json(['data' => $satuan, 'message' => 'Pelanggan berhasil ditambahkan!']);
     }
 
     /**
@@ -96,7 +96,7 @@ class PelangganController extends Controller
     public function update(Request $request, Pelanggan $pelanggan)
     {
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|min:2|unique:pelanggan,nama,' . $pelanggan->id_pelanggan . ',id_pelanggan',
+            'nama' => 'required|min:2',
             'alamat' => 'required|min:2',
             'telepon' => 'min:2|numeric',
         ]);

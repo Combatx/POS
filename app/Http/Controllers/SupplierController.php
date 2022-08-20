@@ -67,7 +67,7 @@ class SupplierController extends Controller
 
         $data = $request->all();
         $satuan = Supplier::create($data);
-        return response()->json(['data' => $satuan, 'message' => 'Supplier berhasil ditambahkan!']);
+        return response()->json(['data' => $satuan, 'message' => 'Supplier berhasil ditambahkan!', 'type' => 'success']);
     }
 
     /**
@@ -116,7 +116,7 @@ class SupplierController extends Controller
         $data = $request->all();
 
         $supplier->update($data);
-        return response()->json(['data' => $supplier, 'message' => 'Supplier berhasil diedit!']);
+        return response()->json(['data' => $supplier, 'message' => 'Supplier berhasil diedit!', 'type' => 'success']);
     }
 
     /**
@@ -128,6 +128,6 @@ class SupplierController extends Controller
     public function destroy(Supplier $supplier)
     {
         $supplier->delete();
-        return response()->json(['data' => null, 'message' => 'Supplier Berhasil dihapus!']);;
+        return response()->json(['data' => null, 'message' => 'Supplier Berhasil dihapus!', 'type' => 'success']);;
     }
 }

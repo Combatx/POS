@@ -105,6 +105,7 @@
                 })
                 .fail(errors => {
                     if (errors.status === 422) {
+                        sweetalertku('Terjadi Kesalahan', 'error', 'error');
                         loopErrors(errors.responseJSON.errors);
                         showAlert(errors.responseJSON.errors.message, 'danger');
                         return;
@@ -132,7 +133,8 @@
                             table.ajax.reload();
                         })
                         .fail(errors => {
-                            showAlert('Tidak dapat menghapus data', 'danger');
+                            // showAlert('Tidak dapat menghapus data', 'danger');
+                            sweetalertku('Tidak dapat menghapus data', 'error', 'error');
                             return;
                         });
                 }

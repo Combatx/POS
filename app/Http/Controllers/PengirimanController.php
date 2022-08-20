@@ -51,7 +51,7 @@ class PengirimanController extends Controller
             class="fa fa-edit"></i></button>
             <button class="btn btn-link text-danger" onclick="deleteData(`' . route('pengiriman.destroy', $query->id_pengiriman) . '`)"><i class="fas fa-trash"></i></button>
             <button class="btn btn-link text-info" onclick="detail(`' . route('pengiriman.bio', $query->id_pengiriman) . '`, `' . route('pengiriman.detail', $query->id_pengiriman) . '`)"><i class="fas fa-eye"></i></button>
-            <a class="btn btn-link text-dark" href="' . route('pengiriman.printsj', $query->id_pengiriman) . '" ><i class="fas fa-print"></i></a>
+            <button class="btn btn-link text-dark" href="' . route('pengiriman.printsj', $query->id_pengiriman) . '" onclick="ceknama(' . $query->id_pengiriman . ')" ><i class="fas fa-print"></i></button>
             ';
             })
             ->rawColumns(['action', 'status'])
@@ -121,7 +121,7 @@ class PengirimanController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'penerima' => 'required|min:2',
-            'petugas_pengiriman' => 'required|min:1',
+            // 'petugas_pengiriman' => 'required|min:1',
             'status' => 'required|not_in:diantar',
         ]);
 
@@ -131,7 +131,7 @@ class PengirimanController extends Controller
 
         $data = [
             'penerima' => $request->penerima,
-            'petugas_pengiriman' => $request->petugas_pengiriman,
+            // 'petugas_pengiriman' => $request->petugas_pengiriman,
             'status' => $request->status,
             'id_user' => Auth::user()->id,
         ];
@@ -153,6 +153,10 @@ class PengirimanController extends Controller
 
     public function printsj($id)
     {
+        $cek_pengiriman = Pengiriman::where('id_pengiriman', $id)->value('petugas_pengiriman');
+        if ($cek_pengiriman == null) {
+            return 'Silahkan Masukan Nama Petugas Pengiriman terlebih dahulu !!!!';
+        }
         $pengiriman = Pengiriman::where('id_pengiriman', $id)->first();
         $penjualan = Penjualan::with('pelanggan')->where('id_penjualan', $pengiriman->id_penjualan)->first();
         $penjualandetail = PenjualanDetail::where('id_pengiriman', $id)->get();
@@ -161,5 +165,28 @@ class PengirimanController extends Controller
         return $pdf->stream('Pengiriman-' . date('Y-m-d-His') . '.pdf');
 
         // return view('pengiriman.ddd');
+    }
+
+    public function ceknama($kode)
+    {
+        $cek_pengiriman = Pengiriman::where('id_pengiriman', $kode)->value('petugas_pengiriman');
+        if ($cek_pengiriman == null) {
+            return response()->json(['cek' => 'tidak']);
+        } elseif ($cek_pengiriman != null) {
+            return response()->json(['cek' => 'ada', 'hasil' => route('pengiriman.printsj', $kode)]);
+        }
+    }
+
+    public function simpankirim(Request $request, $kode)
+    {
+        $cek_pengiriman = Pengiriman::where('id_pengiriman', $kode)->value('petugas_pengiriman');
+        if ($cek_pengiriman == null) {
+            $pengiriman = Pengiriman::where('id_pengiriman', $kode)->update([
+                'petugas_pengiriman' => $request->petugas,
+            ]);
+            return response()->json(['cek' => 'ada', 'hasil' => route('pengiriman.printsj', $kode)]);
+        } elseif ($cek_pengiriman != null) {
+            return response()->json(['cek' => 'tidak']);
+        }
     }
 }
