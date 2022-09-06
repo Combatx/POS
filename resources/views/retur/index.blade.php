@@ -115,10 +115,15 @@
         });
 
         function tambahretur() {
+            $('#id_faktur').val('');
             $('#modal-cek_penjualan').modal('show');
         }
 
         function cekpenjualan() {
+            if ($('#id_faktur').val() == '') {
+                sweetalertku('Field ID Faktur Tidak Boleh Kosong !!', 'error', 'error');
+                return;
+            }
             let kode = $('#id_faktur').val();
             $.get(`{{ url('/retur/cekretur') }}/${kode} `)
                 .done(response => {

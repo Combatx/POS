@@ -15,6 +15,7 @@
                     <x-slot name="thead">
                         <th width="5%">No</th>
                         <th>Tanggal</th>
+                        <th>ID Faktur</th>
                         <th>Total Item</th>
                         <th>Total Harga</th>
                         <th>Diskon</th>
@@ -55,6 +56,9 @@
                     },
                     {
                         data: 'tanggal',
+                    },
+                    {
+                        data: 'id_faktur',
                     },
                     {
                         data: 'total_item',
@@ -138,10 +142,16 @@
                             '_method': 'delete'
                         })
                         .done((response) => {
+                            sweetalertku('Data Berhasil Di Hapus', 'success', 'success');
                             table.ajax.reload();
                         })
                         .fail((errors) => {
-                            sweetalertku('Tidak dapat menghapus data', 'error', 'error');
+                            if (errors.responseJSON.cek == 'fail') {
+                                sweetalertku(errors.responseJSON.message, errors.responseJSON.type, errors
+                                    .responseJSON.type);
+                            } else {
+                                sweetalertku('Tidak dapat menghapus data', 'error', 'error');
+                            }
                             return;
                         });
                 }

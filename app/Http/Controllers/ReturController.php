@@ -85,18 +85,18 @@ class ReturController extends Controller
         $retur->keterangan = $request->keterangan;
         $retur->update();
 
-        $penjualan_detail = PenjualanDetail::where('id_penjualan', $retur->id_penjualan)->get();
-        foreach ($penjualan_detail as $item) {
-            $produk = Produk::find($item->id_produk);
-            $produk->stok -= $item->jumlah;
-            $produk->update();
-        }
+        // $penjualan_detail = PenjualanDetail::where('id_penjualan', $retur->id_penjualan)->get();
+        // foreach ($penjualan_detail as $item) {
+        //     $produk = Produk::find($item->id_produk);
+        //     $produk->stok -= $item->jumlah;
+        //     $produk->update();
+        // }
 
         $detail = ReturDetail::where('id_retur', $retur->id_retur)->get();
 
         foreach ($detail as $item) {
             $produk = Produk::find($item->id_produk);
-            $produk->stok += $item->jumlah;
+            $produk->stok += ($item->jumlah_lama - $item->jumlah);
             $produk->update();
         }
         $update_penjualan = Penjualan::where('id_penjualan', $retur->id_penjualan)->update([
@@ -150,15 +150,16 @@ class ReturController extends Controller
 
     public function cekretur($kode)
     {
-        $penjualan = Penjualan::where('id_penjualan', $kode)->get();
-        $retur = Retur::where('id_penjualan', $kode)->count();
+        $penjualancek = Penjualan::where('id_penjualan', $kode)->where('retur', 'Ya')->count();
 
-        if ($penjualan->count() == 0) {
+        if ($penjualancek == 1) {
+            return response()->json(['type' => 'error', 'message' => 'Telah Ada Data Retur Dari ID Faktur ' . $kode . ' Yang di Input !!']);
+        }
+        $penjualan = Penjualan::where('id_penjualan', $kode)->where('retur', 'Tidak')->count();
+        //$retur = Retur::where('id_penjualan', $kode)->count();
+        if ($penjualan == 0) {
             return response()->json(['type' => 'error', 'message' => 'Tidak di Temukan ID Faktur ' . $kode . ' !!']);
-        } elseif ($penjualan->count() >= 1) {
-            if ($retur == 1) {
-                return response()->json(['type' => 'error', 'message' => 'Telah Ada Data Retur Dari ID Faktur ' . $kode . ' Yang di Input !!']);
-            }
+        } elseif ($penjualan >= 1) {
             return response()->json(['type' => 'success', 'message' => 'ID Faktur Ditemukan' . $kode . ' !!', 'kode' => route('retur.create', $kode)]);
         }
     }

@@ -74,6 +74,7 @@ class LaporanPendapatanController extends Controller
 
         return $data;
     }
+
     public function data($awal, $akhir)
     {
         $data = $this->getData($awal, $akhir);
@@ -86,8 +87,138 @@ class LaporanPendapatanController extends Controller
     public function exportPDF($awal, $akhir)
     {
         $data = $this->getData($awal, $akhir);
+        // dd($data);
         $pdf = Pdf::loadView('laporan.pdf', compact('awal', 'akhir', 'data'));
         $pdf->setPaper('a4', 'landscape');
         return $pdf->stream('Laporan-Pendapatan-' . date('Y-m-d-His') . '.pdf');
+    }
+
+    public function lainya()
+    {
+        $appname = Setting::first()->value('nama_app');
+        return view('laporan.laporan_lainya', compact('appname'));
+    }
+
+
+    public function getDataPembelian($tanggalAwal, $tanggalAkhir)
+    {
+        $no = 1;
+        $data = array();
+        $pendapatan = 0;
+        $total_pendapatan = 0;
+
+
+        $awal = date_format(date_create($tanggalAwal), 'Y-m-d');
+        $akhir = date_format(date_create($tanggalAkhir), 'Y-m-d');
+
+        $total_pembelian = Pembelian::whereBetween('created_at',  [$awal, $akhir])->sum('bayar');
+        $pembelian = Pembelian::whereBetween('created_at',  [$awal, $akhir])->get();
+
+        $total_pendapatan += $total_pembelian;
+
+        $row = array();
+        foreach ($pembelian  as $item) {
+            $row['DT_RowIndex'] = $no++;
+            $row['tanggal'] = tanggal_indonesia($item->created_at, false);
+            $row['supplier'] = $item->supplier->nama;
+            $row['total_item'] = 'Rp. ' . format_uang($item->total_item);
+            $row['total_harga'] = 'Rp. ' . format_uang($item->total_harga);
+            $row['diskon'] = 'Rp. ' . format_uang($item->diskon);
+            $row['total_bayar'] = 'Rp. ' . format_uang($item->bayar);
+            $row['staf'] = $item->user->name;
+            $data[] = $row;
+        }
+
+
+        // if ($row['penjualan'] == 0 && $row['pembelian'] == 0 && $row['barang_keluar'] == 0  && $row['retur'] == 0  && $row['pendapatan'] == 0) {
+        // } else {
+        //     $data[] = $row;
+        // }
+
+        $data[] = [
+            'DT_RowIndex' => '',
+            'tanggal' => '',
+            'supplier' => '',
+            'total_item' => '',
+            'total_harga' => '',
+            'diskon' => '',
+            'total_bayar' => 'Total Pembelian',
+            'staf' => format_uang($total_pendapatan),
+        ];
+
+        return $data;
+    }
+
+    public function pembelian(Request $request)
+    {
+        $awal = $request->tanggal_awal;
+        $akhir = $request->tanggal_akhir;
+        $no = 1;
+        $data = $this->getDataPembelian($request->tanggal_awal, $request->tanggal_akhir);
+        // dd($data);
+        $pdf = Pdf::loadView('laporan.laporan_pembelian', compact('awal', 'akhir', 'data', 'no'));
+        $pdf->setPaper('a4', 'landscape');
+        return $pdf->stream('Laporan-Pembelian-' . date('Y-m-d-His') . '.pdf');
+    }
+
+    public function getDataPenjualan($tanggalAwal, $tanggalAkhir)
+    {
+        $no = 1;
+        $data = array();
+        $pendapatan = 0;
+        $total_pendapatan = 0;
+
+
+        $awal = date_format(date_create($tanggalAwal), 'Y-m-d');
+        $akhir = date_format(date_create($tanggalAkhir), 'Y-m-d');
+
+        $total_penjualan = Penjualan::whereBetween('created_at',  [$awal, $akhir])->sum('bayar');
+        $penjualan = Penjualan::whereBetween('created_at',  [$awal, $akhir])->get();
+
+        $total_pendapatan += $total_penjualan;
+
+        $row = array();
+        foreach ($penjualan  as $item) {
+            $row['DT_RowIndex'] = $no++;
+            $row['tanggal'] = tanggal_indonesia($item->created_at, false);
+            $row['total_item'] = format_uang($item->total_item);
+            $row['total_harga'] = 'Rp. ' . format_uang($item->total_harga);
+            $row['diskon'] = 'Rp. ' . format_uang($item->diskon);
+            $row['total_bayar'] = 'Rp. ' . format_uang($item->bayar);
+            $row['diterima'] = 'Rp. ' . format_uang($item->diterima);
+            $row['staf'] = $item->user->name;
+            $data[] = $row;
+        }
+
+
+        // if ($row['penjualan'] == 0 && $row['pembelian'] == 0 && $row['barang_keluar'] == 0  && $row['retur'] == 0  && $row['pendapatan'] == 0) {
+        // } else {
+        //     $data[] = $row;
+        // }
+
+        $data[] = [
+            'DT_RowIndex' => '',
+            'tanggal' => '',
+            'total_item' => '',
+            'total_harga' => '',
+            'diskon' => '',
+            'total_bayar' => '',
+            'diterima' => 'Total Penjualan',
+            'staf' => format_uang($total_pendapatan),
+        ];
+
+        return $data;
+    }
+
+    public function penjualan(Request $request)
+    {
+        $awal = $request->tanggal_awal;
+        $akhir = $request->tanggal_akhir;
+        $no = 1;
+        $data = $this->getDataPenjualan($request->tanggal_awal, $request->tanggal_akhir);
+        // dd($data);
+        $pdf = Pdf::loadView('laporan.laporan_penjualan', compact('awal', 'akhir', 'data', 'no'));
+        $pdf->setPaper('a4', 'landscape');
+        return $pdf->stream('Laporan-Penjualan-' . date('Y-m-d-His') . '.pdf');
     }
 }

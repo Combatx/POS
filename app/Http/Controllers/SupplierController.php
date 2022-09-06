@@ -37,6 +37,9 @@ class SupplierController extends Controller
         return datatables($query)
             ->addIndexColumn()
             ->addColumn('action', function ($query) {
+                if (auth()->user()->role_id == 1) {
+                    return '';
+                }
                 return '
             <button onclick="editForm(`' . route('supplier.show', $query->id_supplier) . '`)" class="btn btn-link text-info"><i
             class="fa fa-edit"></i></button>

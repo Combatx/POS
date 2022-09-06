@@ -13,9 +13,12 @@
                 <x-slot name="header">
                     {{-- <button onclick="addForm()" class="btn btn-primary"><i class="fa fa-plus-circle">
                             Transasksi Baru</i></button> --}}
-                    <a href="{{ route('pembelian.create') }}" class="btn btn-primary">
-                        <i class="fa fa-plus-circle"> Transasksi Baru</i>
-                    </a>
+                    @if (auth()->user()->role_id == 2)
+                        <a href="{{ route('pembelian.create') }}" class="btn btn-primary">
+                            <i class="fa fa-plus-circle"> Transasksi Baru</i>
+                        </a>
+                    @endif
+
                     {{-- @empty(!session('id_pembelian'))
                         <a href="{{ route('pembelian_detail.index') }}" class="btn btn-info "><i class="fa fa-pencil">
                                 Transasksi Aktif</i></a>

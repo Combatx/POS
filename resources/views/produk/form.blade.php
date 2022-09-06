@@ -12,6 +12,23 @@
                 <label for="kode_barang">Kode Barang</label>
                 <input type="text" name="kode_barang" id="kode_barang" class="form-control" required>
             </div> --}}
+
+
+            <div class="form-group">
+                <label for="kode_barang">Kode Barang</label>
+                <input type="text" name="kode_barang" id="kode_barang" class="form-control">
+            </div>
+            <div class="cek_update_div">
+                <input type="hidden" name="cek_kode" id="cek_kode">
+
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" id="kode_otomatis" name="kode_otomatis"
+                        onclick="cek_otomatis()">
+                    <label class="custom-control-label" for="kode_otomatis">Kode Barang Otomatis</label>
+                </div>
+            </div>
+
+
             <div class="form-group">
                 <label for="nama_barang">Nama Barang</label>
                 <input type="text" name="nama_barang" id="nama_barang" class="form-control" required>
@@ -43,10 +60,10 @@
                 <label for="harga_jual">Harga Jual</label>
                 <input type="text" name="harga_jual" id="harga_jual" class="form-control produk" required>
             </div>
-            <div class="form-group">
+            {{-- <div class="form-group">
                 <label for="diskon">Diskon</label>
                 <input type="diskon" name="diskon" id="diskon" class="form-control produk" value="0">
-            </div>
+            </div> --}}
         </div>
 
     </div>

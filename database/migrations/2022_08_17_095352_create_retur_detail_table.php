@@ -17,10 +17,10 @@ class CreateReturDetailTable extends Migration
             $table->increments('id_retur_detail');
             $table->unsignedInteger('id_retur');
             $table->unsignedInteger('id_produk');
-            $table->integer('harga_jual');
-            $table->integer('jumlah');
-            $table->integer('jumlah_lama');
-            $table->integer('subtotal');
+            $table->integer('harga_jual')->default(0);
+            $table->integer('jumlah')->default(0);
+            $table->integer('jumlah_lama')->default(0);
+            $table->integer('subtotal')->default(0);
             $table->timestamps();
         });
     }

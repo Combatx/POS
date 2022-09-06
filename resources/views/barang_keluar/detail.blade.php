@@ -1,6 +1,6 @@
 <x-modal size="modal-lg" id="modal-detail" data-backdrop="static" data-keyboard="false" aria-labelledby="modal-detail">
 
-    <x-slot name="title">Detail Pembelian</x-slot>
+    <x-slot name="title">Detail Barang Keluar</x-slot>
 
     <x-table class="table-detail">
         <x-slot name="thead">

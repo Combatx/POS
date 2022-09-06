@@ -16,30 +16,28 @@
                     Data Transaksi telah selesai.
                 </div>
                 <x-slot name="footer">
-                    @if ($setting->tipe_nota == 1)
-                        <button class="btn btn-warning btn-flat"
-                            onclick="notaKecil('{{ route('transaksi.nota_kecil') }}', 'Nota PDF')">Cetak Ulang
-                            Nota</button>
-                    @else
-                        <button class="btn btn-warning btn-flat"
-                            onclick="notaBesar('{{ route('transaksi.nota_besar') }}', 'Nota Kecil')">Cetak Ulang
-                            Nota</button>
-                    @endif
+                    <button class="btn btn-success" onclick="pilihnota()">Cetak Nota</button>
                     <a href="{{ route('transaksi.baru') }}" class="btn btn-primary btn-flat">Transaksi Baru</a>
                 </x-slot>
             </x-card>
         </div>
     </div>
+
+    @includeIf('penjualan.pilih_nota')
 @endsection
 
 @push('script')
     <script>
+        function pilihnota() {
+            $('#modal-pilih_nota').modal('show');
+        }
+
         function notaKecil(url, title) {
-            popupCenter(url, title, 625, 500);
+            popupCenter(url, title, 825, 700);
         }
 
         function notaBesar(url, title) {
-            popupCenter(url, title, 900, 675);
+            popupCenter(url, title, 1100, 875);
         }
 
         function popupCenter(url, title, w, h) {

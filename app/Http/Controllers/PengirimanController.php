@@ -66,7 +66,7 @@ class PengirimanController extends Controller
             'kode_pengiriman' => $datakirim->id_pengiriman,
             'kode_faktur' => $datakirim->id_penjualan,
             'tanggal_transaksi' => tanggal_indonesia($datakirim->created_at),
-            'status' => $datakirim->status == 'diantar' ? '<span class="badge badge-warning status-now">' . $datakirim->status . '</span>' : '<span class="badge badge-success status-now">' . $datakirim->status . '</span>',
+            'status' => $datakirim->status == 'diantar' ? '<span class="badge badge-warning status-ku">' . $datakirim->status . '</span>' : '<span class="badge badge-success status-ku">' . $datakirim->status . '</span>',
             'penerima' => $datakirim->penerima == null ? 'Status Belum Berubah' : $datakirim->penerima,
             'petugas_pengirim' => $datakirim->petugas_pengiriman == null ? 'Status Belum Berubah' : $datakirim->petugas_pengiriman,
             'tanggal_update' => $datakirim->updated_at == $datakirim->created_at ? 'Status Belum Berubah' : tanggal_indonesia($datakirim->updated_at),

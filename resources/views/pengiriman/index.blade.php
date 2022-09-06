@@ -246,6 +246,7 @@
         function detail(bio, detail) {
             console.log(bio, detail);
             $(modaldetail).modal('show');
+            $('.status-ku').remove();
             getbio(bio);
             table_detail.ajax.url(detail);
             table_detail.ajax.reload();
@@ -265,7 +266,7 @@
                     $('.tanggal_update').text(response.pengiriman['tanggal_update'])
                 })
                 .fail(errors => {
-                    alert('Tidak dapat menampikan data');
+                    sweetalertku('Tidak dapat menampikan data', 'error', 'error');
                     return;
                 });
 

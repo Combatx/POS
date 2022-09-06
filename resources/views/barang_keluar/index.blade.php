@@ -13,9 +13,11 @@
                 <x-slot name="header">
                     {{-- <button onclick="addForm()" class="btn btn-primary"><i class="fa fa-plus-circle">
                             Transasksi Baru</i></button> --}}
-                    <a href="{{ route('barangkeluar.create') }}" class="btn btn-primary">
-                        <i class="fa fa-plus-circle"> Tambah Barang Keluar</i>
-                    </a>
+                    @if (auth()->user()->role_id == 2)
+                        <a href="{{ route('barangkeluar.create') }}" class="btn btn-primary">
+                            <i class="fa fa-plus-circle"> Tambah Barang Keluar</i>
+                        </a>
+                    @endif
                     {{-- @empty(!session('id_barang_keluar'))
                         <a href="{{ route('barang_keluar_detail.index') }}" class="btn btn-info "><i class="fa fa-pencil">
                                 Transasksi Aktif</i></a>
@@ -137,22 +139,20 @@
                 confirmButtonText: 'Hapus'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    if (confirm('Apakah anda yakin ingin menghapus data?')) {
-                        // event.preventDefault();
-                        $.post(url, {
-                                '_token': $('[name=csrf-token]').attr('content'),
-                                '_method': 'delete'
-                            })
-                            .done((response) => {
-                                sweetalertku('Data Berhasil DI Hapus', 'success', 'success');
-                                table.ajax.reload();
-                            })
-                            .fail((errors) => {
-                                sweetalertku('Tidak dapat menghapus data', 'error', 'error');
-                                // alert('Tidak dapat menyimpan data');
-                                return;
-                            });
-                    }
+                    // event.preventDefault();
+                    $.post(url, {
+                            '_token': $('[name=csrf-token]').attr('content'),
+                            '_method': 'delete'
+                        })
+                        .done((response) => {
+                            sweetalertku('Data Berhasil DI Hapus', 'success', 'success');
+                            table.ajax.reload();
+                        })
+                        .fail((errors) => {
+                            sweetalertku('Tidak dapat menghapus data', 'error', 'error');
+                            // alert('Tidak dapat menyimpan data');
+                            return;
+                        });
                 }
             });
         }

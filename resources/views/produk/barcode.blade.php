@@ -16,18 +16,18 @@
 <body>
     <table width="100%">
         <tr>
-            @foreach ($dataproduk as $key => $produk)
+            @for ($i = 0; $i < $jumlah; $i++)
                 <td class="text-center" style="border: 1px solid #333">
-                    <p>{{ $produk->nama_produk }} - Rp. {{ format_uang($produk->harga_jual) }}</p>
-                    <img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($produk->kode_produk, 'C39') }}"
-                        alt="{{ $produk->kode_produk }}" width="180" height="60">
+                    <p>{{ $produk->nama_barang }} - Rp. {{ format_uang($produk->harga_jual) }}</p>
+                    <img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($produk->kode_barang, 'C39') }}"
+                        alt="{{ $produk->kode_barang }}" width="180" height="60">
                     <br>
-                    {{ $produk->kode_produk }}
+                    {{ $produk->kode_barang }}
                 </td>
                 @if ($no++ % 3 == 0)
         <tr></tr>
         @endif
-        @endforeach
+        @endfor
         </tr>
     </table>
 

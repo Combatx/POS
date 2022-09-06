@@ -35,7 +35,7 @@ class SettingController extends Controller
             'nama_app' => "min:1|max:191|required",
             'nama_perusahaan' => "min:1|max:191|required",
             'telepon' => "required|numeric|min:5",
-            'tipe_nota' => "numeric|required|max:2",
+            // 'tipe_nota' => "numeric|required|max:2",
             'path_logo' => "image|mimes:jpg,bmp,jpeg,png",
             'alamat' => "required|min:2",
             //'tipe_nota' => "image|file|max:2048"
@@ -61,5 +61,11 @@ class SettingController extends Controller
         $setting->update($validatedData);
         return redirect(route('setting.index'))->with('success', 'Profil berhasil Di edit!');
         // return $validateku;
+    }
+
+    public function about()
+    {
+        $appname = Setting::first()->value('nama_app');
+        return view('about.index', compact('appname'));
     }
 }

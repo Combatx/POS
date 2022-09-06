@@ -39,12 +39,20 @@ class BarangKeluarController extends Controller
                 return $barangkeluar->user->name;
             })
             ->addColumn('aksi', function ($barangkeluar) {
-                return '
+                if (auth()->user()->role_id == 1) {
+                    return '
                 <div class="btn-group">
                 <button onclick="showDetail(`' . route('barangkeluar.show', $barangkeluar->id_barang_keluar) . '`)" class="btn btn-xs btn-info btn-flat me-2"><i class="fa fa-eye "></i></button>
                 <button onclick="deleteData(`' . route('barangkeluar.destroy', $barangkeluar->id_barang_keluar) . '`)" class="btn btn-xs btn-danger btn-flat me-2"><i class="fa fa-trash "></i></button>
                 </div>
                 ';
+                } elseif (auth()->user()->role_id == 2) {
+                    return '
+                <div class="btn-group">
+                <button onclick="showDetail(`' . route('barangkeluar.show', $barangkeluar->id_barang_keluar) . '`)" class="btn btn-xs btn-info btn-flat me-2"><i class="fa fa-eye "></i></button>
+                </div>
+                ';
+                }
             })
             ->rawColumns(['aksi'])
             ->make(true);

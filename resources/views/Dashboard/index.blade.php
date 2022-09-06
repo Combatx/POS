@@ -18,7 +18,7 @@
                 <div class="inner">
                     <h3>{{ format_uang($harian_penjualan_angka) }}</h3>
 
-                    <p>Total Penjulalan Harian</p>
+                    <p>Jumlah Penjulalan Harian</p>
                 </div>
                 <div class="icon">
                     <i class="fas fa-cash-register"></i>
@@ -145,7 +145,7 @@
             <div class="info-box">
                 <span class="info-box-icon bg-success"><i class="fas fa-store"></i></span>
                 <div class="info-box-content">
-                    <span class="info-box-text">Pengiriman</span>
+                    <span class="info-box-text">Total Seluruh Penjualan</span>
                     <span class="info-box-number">{{ $penjualan }}</span>
                 </div>
 
@@ -157,8 +157,8 @@
             <div class="info-box">
                 <span class="info-box-icon bg-warning"><i class="fas fa-paper-plane"></i></span>
                 <div class="info-box-content">
-                    <span class="info-box-text">Total Seluruh Penjualan</span>
-                    <span class="info-box-number">{{ $penjualan }}</span>
+                    <span class="info-box-text">Pengiriman</span>
+                    <span class="info-box-number">{{ $pengiriman }}</span>
                 </div>
 
             </div>
@@ -167,7 +167,7 @@
 
         <div class="col-md-3 col-sm-6 col-12">
             <div class="info-box">
-                <span class="info-box-icon bg-danger"><i class="fas fa-exchange"></i></span>
+                <span class="info-box-icon bg-danger"><i class="fas fa-cart-arrow-down"></i></span>
                 <div class="info-box-content">
                     <span class="info-box-text">Total Seluruh Pembelian</span>
                     <span class="info-box-number">{{ $pembelian }}</span>

@@ -276,6 +276,7 @@
                     return;
                 }
 
+                console.log('aaa');
                 // setTimeout(function() {
                 $.post(`{{ url('/transaksi') }}/${id}`, {
                         '_token': $('[name=csrf-token]').attr('content'),
@@ -283,12 +284,13 @@
                         'jumlah': jumlah,
                     })
                     .done(response => {
-                        $(this).on('mouseout', function() {
-                            table.ajax.reload(() => loadForm($('#diskon')
-                                .cleanVal(), $(
-                                    '#diterima').cleanVal()));
-                            $('#kode_barang').focus();
-                        })
+                        console.log('ii');
+                        // $(this).on('mouseout', function() {
+                        table.ajax.reload(() => loadForm($('#diskon')
+                            .cleanVal(), $(
+                                '#diterima').cleanVal()));
+                        $('#kode_barang').focus();
+                        // })
                     }).fail(errors => {
                         if (errors.responseJSON.cek == 'fail') {
                             sweetalertku(errors.responseJSON.message, 'error', 'error');

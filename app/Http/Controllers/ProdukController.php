@@ -53,10 +53,14 @@ class ProdukController extends Controller
                 return $query->satuan->nama;
             })
             ->addColumn('action', function ($query) {
+                if (auth()->user()->role_id == 1) {
+                    return '';
+                }
                 return '
             <button onclick="editForm(`' . route('produk.show', $query->id_produk) . '`)" class="btn btn-link text-info"><i
             class="fa fa-edit"></i></button>
-            <button class="btn btn-link text-danger" onclick="deleteData(`' . route('produk.destroy', $query->id_produk) . '`)"><i class="fas fa-trash"></i></button>';
+            <button class="btn btn-link text-danger" onclick="deleteData(`' . route('produk.destroy', $query->id_produk) . '`)"><i class="fas fa-trash"></i></button>  
+            <button class="btn btn-link text-dark" onclick="get_barcode(`' . $query->kode_barang . '`)"><i class="fas fa-barcode"></i></button>';
             })
             ->rawColumns(['action'])
             ->make(true);
@@ -80,33 +84,71 @@ class ProdukController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            //'kode_barang' => 'required|min:2|unique:produk,kode_barang',
-            'nama_barang' => 'required|min:2|unique:produk,nama_barang',
-            'harga_beli' => 'required|min:2',
-            'harga_jual' => 'required|min:2',
-            'id_kategori' => 'required||numeric',
-            'id_satuan' => 'required|numeric',
-        ]);
+        if ($request->cek_kode == 'manual') {
+            $validator = Validator::make($request->all(), [
+                'kode_barang' => 'required|min:2|unique:produk,kode_barang',
+                'nama_barang' => 'required|min:2|unique:produk,nama_barang',
+                'harga_beli' => 'required|min:2',
+                'harga_jual' => 'required|min:2',
+                'id_kategori' => 'required||numeric',
+                'id_satuan' => 'required|numeric',
+            ]);
 
 
 
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+
+
+            $data = $request->all();
+            $data['harga_beli'] = str_replace('.', '', $request->harga_beli);
+            $data['harga_jual'] = str_replace('.', '', $request->harga_jual);
+            $produk = Produk::create([
+                'kode_barang' => $request->kode_barang,
+                'nama_barang' => $request->nama_barang,
+                'harga_beli' => str_replace('.', '', $request->harga_beli),
+                'harga_jual' => str_replace('.', '', $request->harga_jual),
+                'id_kategori' => $request->id_kategori,
+                'id_satuan' => $request->id_satuan,
+            ]);
+            //$kodeBarang = Kategori::where('id_kategori', $produk->id_kategori)->value('kode_kategori') . $produk->id_produk;
+            return response()->json(['data' => $produk, 'message' => 'Produk berhasil ditambahkan!', 'type' => 'success']);
+        } elseif ($request->cek_kode == 'otomatis') {
+            $validator = Validator::make($request->all(), [
+                //'kode_barang' => 'required|min:2|unique:produk,kode_barang',
+                'nama_barang' => 'required|min:2|unique:produk,nama_barang',
+                'harga_beli' => 'required|min:2',
+                'harga_jual' => 'required|min:2',
+                'id_kategori' => 'required||numeric',
+                'id_satuan' => 'required|numeric',
+            ]);
+
+
+
+            if ($validator->fails()) {
+                return response()->json(['errors' => $validator->errors()], 422);
+            }
+
+
+            $data = $request->all();
+            $data['harga_beli'] = str_replace('.', '', $request->harga_beli);
+            $data['harga_jual'] = str_replace('.', '', $request->harga_jual);
+            $produk = Produk::create([
+                'nama_barang' => $request->nama_barang,
+                'harga_beli' => str_replace('.', '', $request->harga_beli),
+                'harga_jual' => str_replace('.', '', $request->harga_jual),
+                'id_kategori' => $request->id_kategori,
+                'id_satuan' => $request->id_satuan,
+            ]);
+            //$kodeBarang = Kategori::where('id_kategori', $produk->id_kategori)->value('kode_kategori') . $produk->id_produk;
+            $kodelast = Produk::where('id_kategori', $produk->id_kategori)->orderBy('id_produk', 'desc')->skip(1)->value('kode_barang') ?? 0;
+            $pisah = preg_replace('/[^0-9]/', '', $kodelast);
+            $kodeBarang = Kategori::where('id_kategori', $produk->id_kategori)->value('kode_kategori') . ($pisah + 1);
+            $updateKode = Produk::where('id_produk', $produk->id_produk)
+                ->update(['kode_barang' =>  $kodeBarang]);
+            return response()->json(['data' => $produk, 'message' => 'Produk berhasil ditambahkan!', 'type' => 'success']);
         }
-
-
-        $data = $request->all();
-        $data['harga_beli'] = str_replace('.', '', $request->harga_beli);
-        $data['harga_jual'] = str_replace('.', '', $request->harga_jual);
-        $produk = Produk::create($data);
-        //$kodeBarang = Kategori::where('id_kategori', $produk->id_kategori)->value('kode_kategori') . $produk->id_produk;
-        $kodelast = Produk::where('id_kategori', $produk->id_kategori)->orderBy('id_produk', 'desc')->skip(1)->value('kode_barang') ?? 0;
-        $pisah = preg_replace('/[^0-9]/', '', $kodelast);
-        $kodeBarang = Kategori::where('id_kategori', $produk->id_kategori)->value('kode_kategori') . ($pisah + 1);
-        $updateKode = Produk::where('id_produk', $produk->id_produk)
-            ->update(['kode_barang' =>  $kodeBarang]);
-        return response()->json(['data' => $produk, 'message' => 'Produk berhasil ditambahkan!', 'type' => 'success']);
     }
 
     /**
@@ -141,7 +183,7 @@ class ProdukController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            //'kode_barang' => 'required|min:2|unique:produk,kode_barang,' . $produk->id_produk . ',id_produk',
+            'kode_barang' => 'required|min:2|unique:produk,kode_barang,' . $produk->id_produk . ',id_produk',
             'nama_barang' => 'required|min:2|unique:produk,nama_barang,' . $produk->id_produk . ',id_produk',
             'harga_beli' => 'required|min:1',
             'harga_jual' => 'required|min:1',
@@ -157,9 +199,16 @@ class ProdukController extends Controller
         $data = $request->all();
         $data['harga_beli'] = str_replace('.', '', $data['harga_beli']);
         $data['harga_jual'] = str_replace('.', '', $data['harga_jual']);
-        $data['diskon'] = str_replace('.', '', $data['diskon']);
+        // $data['diskon'] = str_replace('.', '', $data['diskon']);
 
-        $produk->update($data);
+        $produk->update([
+            'kode_barang' => $request->kode_barang,
+            'nama_barang' => $request->nama_barang,
+            'harga_beli' => str_replace('.', '', $request->harga_beli),
+            'harga_jual' => str_replace('.', '', $request->harga_jual),
+            'id_kategori' => $request->id_kategori,
+            'id_satuan' => $request->id_satuan,
+        ]);
         return response()->json(['data' => $produk, 'message' => 'Produk berhasil diedit!', 'type' => 'success']);
     }
 
@@ -175,12 +224,35 @@ class ProdukController extends Controller
         return response()->json(['data' => null, 'message' => 'Produk Berhasil dihapus!', 'type' => 'success']);
     }
 
-    public function cetak_barcode(Request $request)
+    public function cetak_barcode($kode, $jumlah)
     {
-        $produk = Produk::where('id_produk', $request->kode)->first();
+        $jumlah = $jumlah;
+        $produk = Produk::where('kode_barang', $kode)->first();
+        if ($produk == null) {
+            response()->json(['message' => 'Terjadi Kesalahan'], 400);
+        }
         $no = 1;
-        $pdf = PDF::loadView('produk.barcode', compact('produk', 'no'));
+        $pdf = PDF::loadView('produk.barcode', compact('produk', 'no', 'jumlah'));
         $pdf->setPaper('a4', 'portait');
         return $pdf->stream('barcode-' . $produk->nama_barang . '.pdf', array("Attachment" => 0));
+    }
+
+    public function datastok()
+    {
+        $query = Produk::select('nama_barang', 'stok')->orderBy('stok', 'desc')->get();
+
+        return datatables($query)
+            ->addIndexColumn()
+
+            ->addColumn('stok', function ($produk) {
+                return format_uang($produk->stok);
+            })
+            ->make(true);
+    }
+
+    public function stok()
+    {
+        $appname = Setting::first()->value('nama_app');
+        return view('produk.stok_barang', compact('appname'));
     }
 }

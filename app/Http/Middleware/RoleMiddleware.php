@@ -20,8 +20,9 @@ class RoleMiddleware
 
         if (in_array($user->role->nama, $roles)) {
             return $next($request);
-        };
+        }
 
-        return redirect()->route('dashboard.index');
+        // return redirect()->route('dashboard.index');
+        return abort(404);
     }
 }

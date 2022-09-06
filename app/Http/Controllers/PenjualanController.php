@@ -6,6 +6,7 @@ use App\Models\Pengiriman;
 use App\Models\Penjualan;
 use App\Models\PenjualanDetail;
 use App\Models\Produk;
+use App\Models\Retur;
 use App\Models\Setting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -29,6 +30,9 @@ class PenjualanController extends Controller
         return datatables()
             ->of($penjualan)
             ->addIndexColumn()
+            ->addColumn('id_faktur', function ($penjualan) {
+                return $penjualan->id_penjualan;
+            })
             ->addColumn('total_item', function ($penjualan) {
                 return format_uang($penjualan->total_item);
             })
@@ -48,12 +52,20 @@ class PenjualanController extends Controller
                 return optional($penjualan->user)->name ?? '';
             })
             ->addColumn('aksi', function ($penjualan) {
-                return '
+                if (auth()->user()->role_id == 1) {
+                    return '
                 <div class="btn-group">
                 <button onclick="showDetail(`' . route('penjualan.show', $penjualan->id_penjualan) . '`)" class="btn btn-xs btn-info btn-flat me-2"><i class="fa fa-eye "></i></button>
                 <button onclick="deleteData(`' . route('penjualan.destroy', $penjualan->id_penjualan) . '`)" class="btn btn-xs btn-danger btn-flat me-2"><i class="fa fa-trash "></i></button>
                 </div>
                 ';
+                } elseif (auth()->user()->role_id == 3) {
+                    return '
+                <div class="btn-group">
+                <button onclick="showDetail(`' . route('penjualan.show', $penjualan->id_penjualan) . '`)" class="btn btn-xs btn-info btn-flat me-2"><i class="fa fa-eye "></i></button>
+                </div>
+                ';
+                }
             })
             ->rawColumns(['aksi'])
             ->make(true);
@@ -68,9 +80,6 @@ class PenjualanController extends Controller
             ->addIndexColumn()
             ->addColumn('kode_barang', function ($detail) {
                 return '<span class="label label-success">' . $detail->produk->kode_barang . '</span>';
-            })
-            ->addColumn('kode_barang', function ($detail) {
-                return $detail->produk->kode_barang;
             })
             ->addColumn('nama_barang', function ($detail) {
                 return $detail->produk->nama_barang;
@@ -160,6 +169,14 @@ class PenjualanController extends Controller
 
     public function destroy($id)
     {
+        $cek_kirim = Pengiriman::where('id_penjualan', $id)->count();
+        $cek_retur = Retur::where('id_penjualan', $id)->count();
+        if ($cek_kirim >= 1) {
+            return response()->json(['message' => 'Mohon Hapus Data Pengiriman Terlebih Dahulu Sesuai Dengan ID Faktur ' . $id, 'type' => 'error', 'cek' => 'fail'], 400);
+        }
+        if ($cek_retur >= 1) {
+            return response()->json(['message' => 'Mohon Hapus Data Retur Terlebih Dahulu Sesuai Dengan ID Faktur ' . $id, 'type' => 'error', 'cek' => 'fail'], 400);
+        }
         $penjualan = Penjualan::find($id);
         $detail = PenjualanDetail::where('id_penjualan', $penjualan->id_penjualan)->get();
         foreach ($detail as $item) {

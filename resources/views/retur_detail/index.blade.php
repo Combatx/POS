@@ -54,7 +54,7 @@
         <div class="col-lg-12">
             <x-card>
 
-                <h2>{{ $id_retur }}</h2>
+                {{-- <h2>{{ $id_retur }}</h2> --}}
                 <x-table class="table-retur" id="table-retur">
                     <x-slot name="thead">
                         <th width="5%">No</th>
