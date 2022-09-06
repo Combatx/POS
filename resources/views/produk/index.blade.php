@@ -42,6 +42,7 @@
                     </div>
                 </div>
 
+                <input type="hidden" name="kode" id="kodeku">
                 <x-slot name="header">
                     <button onclick="addForm(`{{ route('produk.store') }}`)" class="btn btn-primary"><i
                             class="fas fa-plus-circle"></i> Tambah</button>
@@ -55,7 +56,7 @@
                         <th>Satuan</th>
                         <th>Harga Beli</th>
                         <th>Harga Jual</th>
-                        <th>Diskon</th>
+                        {{-- <th>Diskon</th> --}}
                         <th>Stok</th>
                         <th width="10%"><i class="fas fa-cog"></i></th>
                     </x-slot>
@@ -64,22 +65,31 @@
         </div>
     </div>
     @includeIf('produk.form')
+    @includeIf('produk.jumlah_barcode')
 
 @endsection
 
 @includeIf('includes.datatables')
 @includeIf('includes.jquery-mask')
 @includeIf('includes.select2')
+@includeIf('includes.sweetalert2')
 
 @push('script')
     <script>
         let modal = '#modal-form';
         let table;
+        let cek_kode_update;
 
         $(document).ready(function() {
             $('.satuanform').select2();
             $('.kategoriform').select2();
             inputMask();
+            if (!$('#kode_otomatis').is(":checked")) {
+                $('#kode_barang').prop('disabled', true);
+                // $('#kode_barang').prop('required', false);
+                $('#cek_kode').val('otomatis');
+            }
+
         });
 
         table = $('.table').DataTable({
@@ -115,9 +125,9 @@
                 {
                     data: 'harga_jual'
                 },
-                {
-                    data: 'diskon'
-                },
+                // {
+                //     data: 'diskon'
+                // },
                 {
                     data: 'stok'
                 },
@@ -152,6 +162,7 @@
         });
 
         function addForm(url, title = 'Tambah') {
+            cek_update(title);
             $(modal).modal('show');
             $(`${modal} .modal-title`).text(title);
             $(`${modal} form`).attr('action', url);
@@ -161,6 +172,7 @@
         }
 
         function editForm(url, title = 'Edit') {
+            cek_update(title);
             $.get(url)
                 .done(response => {
                     $(modal).modal('show');
@@ -172,7 +184,7 @@
                     loopForm(response.data);
                 })
                 .fail(errors => {
-                    alert('Tidak dapat menampilkan data');
+                    sweetalertku('Tidak dapat menampilkan data', 'error', 'error');
                     return;
                 });
         }
@@ -188,32 +200,48 @@
                 })
                 .done(response => {
                     $(modal).modal('hide');
-                    showAlert(response.message, 'success');
+                    // showAlert(response.message, response.type, response.type);
+                    sweetalertku(response.message, response.type, response.type);
                     table.ajax.reload();
                 })
                 .fail(errors => {
                     if (errors.status === 422) {
+                        sweetalertku('Terjadi Kesalahan', 'error', 'error');
                         loopErrors(errors.responseJSON.errors);
                         showAlert(errors.responseJSON.errors.message, 'danger');
                         return;
+                    } else {
+                        sweetalertku('Terjadi Kesalahan User', 'error', 'error');
                     }
                 });
         }
 
         function deleteData(url) {
-            if (confirm('Yakin data akan di hapus?')) {
-                $.post(url, {
-                        '_method': 'delete'
-                    })
-                    .done(response => {
-                        showAlert(response.message, 'success');
-                        table.ajax.reload();
-                    })
-                    .fail(errors => {
-                        showAlert('Tidak dapat menghapus data', 'danger');
-                        return;
-                    });
-            }
+            Swal.fire({
+                title: 'Delete',
+                text: "Apakah Kamu Ingin Menghapus Data Ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Hapus'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post(url, {
+                            '_method': 'delete'
+                        })
+                        .done(response => {
+                            // showAlert(response.message, 'success');
+                            sweetalertku(response.message, response.type, response.type);
+                            table.ajax.reload();
+                        })
+                        .fail(errors => {
+                            // showAlert('Tidak dapat menghapus data', 'danger');
+                            sweetalertku('Tidak dapat menghapus data', 'error', 'error');
+                            return;
+                        });
+                }
+            });
         }
 
         function resetForm(selector) {
@@ -258,6 +286,18 @@
             table.ajax.reload();
         }
 
+        function cek_otomatis() {
+            if ($('#kode_otomatis').is(":checked")) {
+                $('#kode_barang').prop('disabled', false);
+                // $('#kode_barang').prop('required', true);
+                $('#cek_kode').val('manual');
+            } else if (!$('#kode_otomatis').is(":checked")) {
+                $('#kode_barang').prop('disabled', true);
+                // $('#kode_barang').prop('required', false);
+                $('#cek_kode').val('otomatis');
+            }
+        }
+
 
         function showAlert(message, type) {
             let title = '';
@@ -288,5 +328,41 @@
                 submitForm(this.form);
             }
         });
+
+        function get_barcode(kode) {
+            $('#kodeku').val(kode);
+            $('#jumlahku').val('');
+            $('#modal-jumlah_barcode').modal('show');
+
+        }
+
+        function cetak_barcode() {
+            if ($('#jumlahku').val() == '') {
+                sweetalertku('Field Jumlah Tidak Boleh Kosong !!', 'error', 'error');
+                return;
+            }
+
+            let jumlah = $('#jumlahku').val();
+            let kode = $('#kodeku').val();
+            location.href = "/produk/cetak-barcode/" + kode + "/" + jumlah;
+        }
+
+        function cek_update(title) {
+            if (title == 'Tambah') {
+                $('.cek_update_div').show();
+            } else if (title == 'Edit') {
+                $('.cek_update_div').hide();
+                $('#kode_barang').prop('disabled', false);
+            }
+        }
+
+        function sweetalertku(message, title, type) {
+            Swal.fire({
+                title: title,
+                text: message,
+                icon: type,
+                confirmButtonText: 'OK'
+            })
+        }
     </script>
 @endpush

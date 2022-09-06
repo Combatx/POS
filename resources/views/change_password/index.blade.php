@@ -97,9 +97,9 @@
             <li class="nav-item" role="presentation">
                 <a href="{{ route('reset.index') }}" class="aktif">Ubah Password</a>
             </li>
-            <li class="nav-item" role="presentation">
-                <a href="#" class="nonaktif">About Setting</a>
-            </li>
+            {{-- <li class="nav-item" role="presentation">
+                <a href="{{ route('about.index') }}" class="nonaktif">About Setting</a>
+            </li> --}}
         </ul>
 
         <div class="garis"></div>

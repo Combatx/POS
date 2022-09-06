@@ -13,9 +13,12 @@
                 <x-slot name="header">
                     {{-- <button onclick="addForm()" class="btn btn-primary"><i class="fa fa-plus-circle">
                             Transasksi Baru</i></button> --}}
-                    <a href="{{ route('pembelian.create') }}" class="btn btn-primary">
-                        <i class="fa fa-plus-circle"> Transasksi Baru</i>
-                    </a>
+                    @if (auth()->user()->role_id == 2)
+                        <a href="{{ route('pembelian.create') }}" class="btn btn-primary">
+                            <i class="fa fa-plus-circle"> Transasksi Baru</i>
+                        </a>
+                    @endif
+
                     {{-- @empty(!session('id_pembelian'))
                         <a href="{{ route('pembelian_detail.index') }}" class="btn btn-info "><i class="fa fa-pencil">
                                 Transasksi Aktif</i></a>
@@ -44,6 +47,8 @@
 @endsection
 
 @includeIf('includes.datatables')
+@includeIf('includes.sweetalert2')
+
 @push('script')
     <script>
         let table, table1;
@@ -133,20 +138,40 @@
         }
 
         function deleteData(url) {
-            if (confirm('Apakah anda yakin ingin menghapus data?')) {
-                // event.preventDefault();
-                $.post(url, {
-                        '_token': $('[name=csrf-token]').attr('content'),
-                        '_method': 'delete'
-                    })
-                    .done((response) => {
-                        table.ajax.reload();
-                    })
-                    .fail((errors) => {
-                        alert('Tidak dapat menyimpan data');
-                        return;
-                    });
-            }
+            Swal.fire({
+                title: 'Delete',
+                text: "Apakah Kamu Ingin Menghapus Data Ini?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Hapus'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // event.preventDefault();
+                    $.post(url, {
+                            '_token': $('[name=csrf-token]').attr('content'),
+                            '_method': 'delete'
+                        })
+                        .done((response) => {
+                            sweetalertku('Data Berhasil Di Hapus', 'success', 'success');
+                            table.ajax.reload();
+                        })
+                        .fail((errors) => {
+                            sweetalertku('Tidak dapat menghapus data', 'error', 'error');
+                            return;
+                        });
+                }
+            });
+        }
+
+        function sweetalertku(message, title, type) {
+            Swal.fire({
+                title: title,
+                text: message,
+                icon: type,
+                confirmButtonText: 'OK'
+            })
         }
     </script>
 @endpush

@@ -21,7 +21,7 @@ class CreateProdukTable extends Migration
             $table->string('nama_barang')->unique();
             $table->integer('harga_beli');
             $table->integer('harga_jual');
-            $table->integer('diskon')->default(0);
+            // $table->integer('diskon')->default(0);
             $table->integer('stok')->default(0);
             $table->timestamps();
         });

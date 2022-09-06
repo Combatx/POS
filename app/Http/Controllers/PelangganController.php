@@ -32,6 +32,9 @@ class PelangganController extends Controller
         return datatables($query)
             ->addIndexColumn()
             ->addColumn('action', function ($query) {
+                if (auth()->user()->role_id == 1) {
+                    return '';
+                }
                 return '
             <button onclick="editForm(`' . route('pelanggan.show', $query->id_pelanggan) . '`)" class="btn btn-link text-info"><i
             class="fa fa-edit"></i></button>
@@ -51,7 +54,7 @@ class PelangganController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|min:2|unique:pelanggan,nama',
+            'nama' => 'required|min:2',
             'alamat' => 'required',
         ]);
 
@@ -61,7 +64,7 @@ class PelangganController extends Controller
 
         $data = $request->all();
         $satuan = Pelanggan::create($data);
-        return response()->json(['data' => $satuan, 'message' => 'pelanggan berhasil ditambahkan!']);
+        return response()->json(['data' => $satuan, 'message' => 'Pelanggan berhasil ditambahkan!', 'type' => 'success']);
     }
 
     /**
@@ -96,9 +99,9 @@ class PelangganController extends Controller
     public function update(Request $request, Pelanggan $pelanggan)
     {
         $validator = Validator::make($request->all(), [
-            'nama' => 'required|min:2|unique:pelanggan,nama,' . $pelanggan->id_pelanggan . ',id_pelanggan',
+            'nama' => 'required|min:2',
             'alamat' => 'required|min:2',
-            'telepon' => 'min:2|numeric',
+            // 'telepon' => 'min:2|numeric',
         ]);
 
 
@@ -110,7 +113,7 @@ class PelangganController extends Controller
         $data = $request->all();
 
         $pelanggan->update($data);
-        return response()->json(['data' => $pelanggan, 'message' => 'Pelanggan berhasil diedit!']);
+        return response()->json(['data' => $pelanggan, 'message' => 'Pelanggan berhasil diedit!', 'type' => 'success']);
     }
 
     /**
@@ -122,6 +125,6 @@ class PelangganController extends Controller
     public function destroy(Pelanggan $pelanggan)
     {
         $pelanggan->delete();
-        return response()->json(['data' => null, 'message' => 'pelanggan Berhasil dihapus!']);;
+        return response()->json(['data' => null, 'message' => 'pelanggan Berhasil dihapus!', 'type' => 'success']);;
     }
 }

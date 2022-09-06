@@ -78,20 +78,6 @@
         </div>
         <div class="col-lg-6">
             <div style="width: 70%" class="tepi">
-                <div class="form-group">
-                    <label for="tipe_nota">Tipe Nota</label>
-                    <select id="tipe_nota" name="tipe_nota"
-                        class="form-control @error('tipe_nota') is-invalid @enderror">
-                        <option selected disabled>Pilih Tipe Nota</option>
-                        <option value="0">Besar</option>
-                        <option value="1">Kecil</option>
-                    </select>
-                </div>
-                @error('tipe_nota')
-                    <div class="invalid-feedback">
-                        {{ $message }}
-                    </div>
-                @enderror
 
                 <div class="form-group">
                     <label for="alamat" style="font-size: 13px;">Alamat</label>
@@ -105,12 +91,11 @@
 
                 <input type="hidden" name="cekubah" id="cekubah" name="cekubah" value="default">
                 <input type="hidden" name="deleteimg" id="deleteimg" name="deleteimg" value="default">
-                <input type="hidden" name="oldImage" id="oldImage" name="oldImage"
-                    value="{{ $setting->path_logo }}">
+                <input type="hidden" name="oldImage" id="oldImage" name="oldImage" value="{{ $setting->path_logo }}">
             </div>
         </div>
         <div class=" mt-5 tepi d-flex justify-content-start">
-            <button class="btn btn-primary">Update Profil</button>
+            <button class="btn btn-primary">Update Setting</button>
         </div>
     </div>
 </form>

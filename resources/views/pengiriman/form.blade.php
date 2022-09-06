@@ -25,14 +25,15 @@
                 <input disabled type="text" name="pembeli" id="pembeli" class="form-control kategori">
             </div>
             <div class="form-group">
+                <label for="petugas_pengiriman">Petugas Pengirim Barang</label>
+                <input disabled type="text" name="petugas_pengiriman" id="petugas_pengiriman"
+                    class="form-control kategori" required>
+            </div>
+            <div class="form-group">
                 <label for="penerima">Penerima</label>
                 <input type="text" name="penerima" id="penerima" class="form-control kategori" required>
             </div>
-            <div class="form-group">
-                <label for="petugas_pengiriman">Petugas Pengirim Barang</label>
-                <input type="text" name="petugas_pengiriman" id="petugas_pengiriman" class="form-control kategori"
-                    required>
-            </div>
+
             <div class="form-group">
                 <label for="status">Status</label>
                 <select class="form-control" id="status" name="status" required>

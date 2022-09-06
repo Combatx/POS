@@ -72,9 +72,16 @@ class PembelianDetailController extends Controller
 
     public function store(Request $request)
     {
-        $produk = Produk::where('id_produk', $request->id_produk)->first();
-        if (!$produk) {
-            return response()->json('Data gagal disimpan', 400);
+        if ($request->cekkondisi == 'pilihbarang') {
+            $produk = Produk::where('id_produk', $request->id_produk)->first();
+            if (!$produk) {
+                return response()->json(['message' => 'Barang Tidak Di Temukan', 'cek' => 'fail'], 400);
+            }
+        } elseif ($request->cekkondisi == 'cekkode') {
+            $produk = Produk::where('kode_barang', $request->kode_barang)->first();
+            if (!$produk) {
+                return response()->json(['message' => 'Barang Tidak Di Temukan', 'cek' => 'fail'], 400);
+            }
         }
 
         $detail = new PembelianDetail();

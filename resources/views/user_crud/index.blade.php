@@ -72,12 +72,13 @@
                     data: 'alamat'
                 },
                 {
+                    data: 'role',
+                },
+                {
+
                     data: 'foto',
                     searchable: false,
                     sortable: false,
-                },
-                {
-                    data: 'role',
                 },
                 {
                     data: 'status',

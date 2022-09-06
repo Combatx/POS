@@ -36,8 +36,15 @@
                         </p>
                     </a>
                 </li>
-                @if (auth()->user()->hasRole('gudang'))
+
+                @if (auth()->user()->hasRole('gudang') ||
+                    auth()->user()->hasRole('kasir') ||
+                    auth()->user()->hasRole('admin'))
                     <li class="nav-header">MASTER</li>
+                @endif
+
+                @if (auth()->user()->hasRole('gudang') ||
+                    auth()->user()->hasRole('admin'))
                     <li class="nav-item">
                         <a href="{{ route('kategori.index') }}"
                             class="nav-link {{ request()->is('kategori*') ? 'active' : '' }}">
@@ -75,22 +82,34 @@
                         </a>
                     </li>
                 @endif
-                @if (auth()->user()->hasRole('kasir'))
-                    <a href="{{ route('pelanggan.index') }}"
-                        class="nav-link {{ request()->is('pelanggan*') ? 'active' : '' }}">
-                        <i class="fas fa-users"></i>
-                        <p>
-                            Pelanggan
-                        </p>
-                    </a>
+                @if (auth()->user()->hasRole('kasir') ||
+                    auth()->user()->hasRole('admin'))
+                    <li class="nav-item">
+                        <a href="{{ route('pelanggan.index') }}"
+                            class="nav-link {{ request()->is('pelanggan*') ? 'active' : '' }}">
+                            <i class="fas fa-users"></i>
+                            <p>
+                                Pelanggan
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('stok') }}" class="nav-link {{ request()->is('stok*') ? 'active' : '' }}">
+                            <i class="fas fa-warehouse"></i>
+                            <p>
+                                Stok
+                            </p>
+                        </a>
                     </li>
                 @endif
 
                 @if (auth()->user()->hasRole('gudang') ||
-                    auth()->user()->hasRole('kasir'))
+                    auth()->user()->hasRole('kasir') ||
+                    auth()->user()->hasRole('admin'))
                     <li class="nav-header">Transaksi</li>
                 @endif
-                @if (auth()->user()->hasRole('gudang'))
+                @if (auth()->user()->hasRole('gudang') ||
+                    auth()->user()->hasRole('admin'))
                     <li class="nav-item">
                         <a href="{{ route('pembelian.index') }}"
                             class="nav-link {{ request()->is('pembelian*') ? 'active' : '' }}">
@@ -100,8 +119,18 @@
                             </p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="{{ route('barangkeluar.index') }}"
+                            class="nav-link {{ request()->is('barangkeluar*') || request()->is('barang_keluar_detail*') ? 'active' : '' }}">
+                            <i class="fas fa-box-open"></i>
+                            <p>
+                                Barang Keluar
+                            </p>
+                        </a>
+                    </li>
                 @endif
-                @if (auth()->user()->hasRole('kasir'))
+                @if (auth()->user()->hasRole('kasir') ||
+                    auth()->user()->hasRole('admin'))
                     <li class="nav-item">
                         <a href="{{ route('penjualan.index') }}"
                             class="nav-link {{ request()->is('penjualan*') ? 'active' : '' }}">
@@ -120,6 +149,8 @@
                             </p>
                         </a>
                     </li> --}}
+                @endif
+                @if (auth()->user()->hasRole('kasir'))
                     <li class="nav-item">
                         <a href="{{ route('transaksi.baru') }}"
                             class="nav-link {{ request()->is('transaksi/baru') ? 'active' : '' }} || {{ request()->is('transaksi/selesai') ? 'active' : '' }}">
@@ -129,13 +160,47 @@
                             </p>
                         </a>
                     </li>
+                @endif
+                @if (auth()->user()->hasRole('kasir') ||
+                    auth()->user()->hasRole('admin'))
+                    <li class="nav-item">
+                        <a href="{{ route('retur.index') }}"
+                            class="nav-link {{ request()->is('retur*') ? 'active' : '' }}">
+                            <i class="fas fa-exchange-alt"></i>
+                            <p>
+                                Retur
+                            </p>
+                        </a>
+                    </li>
 
                     <li class="nav-item">
                         <a href="{{ route('pengiriman.index') }}"
                             class="nav-link {{ request()->is('pengiriman*') ? 'active' : '' }}">
-                            <i class="fas fa-store"></i>
+                            <i class="fas fa-truck"></i>
                             <p>
                                 Pengiriman
+                            </p>
+                        </a>
+                    </li>
+                @endif
+
+                @if (auth()->user()->hasRole('admin'))
+                    <li class="nav-header">Report</li>
+                    <li class="nav-item">
+                        <a href="{{ route('laporan.index') }}"
+                            class="nav-link {{ request()->is('laporan_pendapatan') ? 'active' : '' }} ? 'active' : '' }}">
+                            <i class="fas fa-money-bill"></i>
+                            <p>
+                                Laporan Pendapatan
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('laporan.lainya') }}"
+                            class="nav-link {{ request()->is('laporan_lainya') ? 'active' : '' }} ? 'active' : '' }}">
+                            <i class="fas fa-book"></i>
+                            <p>
+                                Laporan Lainnya
                             </p>
                         </a>
                     </li>

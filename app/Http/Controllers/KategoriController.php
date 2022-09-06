@@ -28,6 +28,9 @@ class KategoriController extends Controller
         return datatables($query)
             ->addIndexColumn()
             ->addColumn('action', function ($query) {
+                if (auth()->user()->role_id == 1) {
+                    return '';
+                }
                 return '
             <button onclick="editForm(`' . route('kategori.show', $query->id_kategori) . '`)" class="btn btn-link text-info"><i
             class="fa fa-edit"></i></button>

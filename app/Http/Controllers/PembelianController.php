@@ -51,12 +51,20 @@ class PembelianController extends Controller
                 return $pembelian->user->name;
             })
             ->addColumn('aksi', function ($pembelian) {
-                return '
+                if (auth()->user()->role_id == 1) {
+                    return '
                 <div class="btn-group">
                 <button onclick="showDetail(`' . route('pembelian.show', $pembelian->id_pembelian) . '`)" class="btn btn-xs btn-info btn-flat me-2"><i class="fa fa-eye "></i></button>
                 <button onclick="deleteData(`' . route('pembelian.destroy', $pembelian->id_pembelian) . '`)" class="btn btn-xs btn-danger btn-flat me-2"><i class="fa fa-trash "></i></button>
                 </div>
                 ';
+                } elseif (auth()->user()->role_id == 2) {
+                    return '
+                <div class="btn-group">
+                <button onclick="showDetail(`' . route('pembelian.show', $pembelian->id_pembelian) . '`)" class="btn btn-xs btn-info btn-flat me-2"><i class="fa fa-eye "></i></button>
+                </div>
+                ';
+                }
             })
             ->rawColumns(['aksi'])
             ->make(true);
