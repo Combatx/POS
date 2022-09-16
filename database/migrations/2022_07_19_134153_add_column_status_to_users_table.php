@@ -13,11 +13,11 @@ class AddColumnStatusToUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->enum('status', ['Aktif', 'NonAktif'])
-                ->after('foto')
-                ->default('Aktif');
-        });
+        // Schema::table('users', function (Blueprint $table) {
+        //     $table->enum('status', ['Aktif', 'NonAktif'])
+        //         ->after('foto')
+        //         ->default('Aktif');
+        // });
     }
 
     /**

@@ -25,13 +25,13 @@ class UserCrudController extends Controller
             ->addColumn('status', function ($query) {
                 if ($query->status == "Aktif") {
                     return '<div class="custom-control custom-switch">
-                <input type="checkbox" name="status" class="custom-control-input status-' . $query->id . '" id="status" checked onclick="checkswitch(' . $query->id . ',`' . route('user.status', $query->id) . '`)">
-                <label class="custom-control-label font-weight-normal" for="status">Aktif</label>
+                <input type="checkbox" name="status" class="custom-control-input status-' . $query->id . '" id="status-' . $query->id . '" checked onclick="checkswitch(' . $query->id . ',`' . route('user.status', $query->id) . '`)">
+                <label class="custom-control-label font-weight-normal" for="status-' . $query->id . '">Aktif</label>
               </div>';
                 } else if ($query->status == "NonAktif") {
                     return '<div class="custom-control custom-switch">
-                <input type="checkbox" name="status" class="custom-control-input status-' . $query->id . '" id="status" onclick="checkswitch(' . $query->id . ',`' . route('user.status', $query->id) . '`)">
-                <label class="custom-control-label font-weight-normal" for="status">Non Aktif</label>
+                <input type="checkbox" name="status" class="custom-control-input status-' . $query->id . '" id="status-' . $query->id . '" onclick="checkswitch(' . $query->id . ',`' . route('user.status', $query->id) . '`)">
+                <label class="custom-control-label font-weight-normal" for="status-' . $query->id . '">Non Aktif</label>
               </div>';
                 }
             })
