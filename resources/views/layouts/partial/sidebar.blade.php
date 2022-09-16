@@ -2,7 +2,7 @@
     <!-- Brand Logo -->
     <a href="{{ route('dashboard.index') }}" class="brand-link bg-primary">
         <img src="{{ asset('AdminLTE/dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo"
-            class="brand-image img-circle elevation-3" style="opacity: .8">
+            class="brand-image img-circle elevation-3" style="opacity: .8;">
         <span class="brand-text font-weight-light">{{ $appname }}</span>
     </a>
 
@@ -12,10 +12,15 @@
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
             <div class="image">
                 @if (Auth::user()->foto == 'img/user1.png')
-                    <img src="{{ asset(Auth::user()->foto) }}" class="img-circle elevation-2" alt="User Image">
+                    <img class="foto_profil" src="{{ asset(Auth::user()->foto) }}" class="img-circle elevation-2"
+                        alt="User Image">
                 @else
                     <img src="{{ asset('storage/' . Auth::user()->foto) }}" class="img-circle elevation-2"
-                        alt="User Image">
+                        alt="User Image"
+                        style="width: 35px;
+                        height: 35px;
+                        /* object-fit: cover; */
+                        border-radius: 50%;">
                 @endif
             </div>
             <div class="info">

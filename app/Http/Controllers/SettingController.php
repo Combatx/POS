@@ -30,7 +30,6 @@ class SettingController extends Controller
      */
     public function update(Request $request, Setting $setting)
     {
-        //@dd($request->path_logo);
         $rules = [
             'nama_app' => "min:1|max:191|required",
             'nama_perusahaan' => "min:1|max:191|required",

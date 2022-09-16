@@ -96,7 +96,7 @@
 
         function checkswitch(go, url) {
             if ($('.status-' + parseInt(go)).is(":checked")) {
-                console.log(url);
+                //console.log(url);
                 $.ajax({
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

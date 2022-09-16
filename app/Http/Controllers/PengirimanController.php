@@ -163,8 +163,6 @@ class PengirimanController extends Controller
         $pdf = PDF::loadView('pengiriman.surat', compact('pengiriman', 'penjualan', 'penjualandetail'));
         $pdf->setPaper(0, 0, 609, 440, 'potrait');
         return $pdf->stream('Pengiriman-' . date('Y-m-d-His') . '.pdf');
-
-        // return view('pengiriman.ddd');
     }
 
     public function ceknama($kode)

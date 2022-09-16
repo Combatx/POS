@@ -18,7 +18,7 @@ class SettingSeeder extends Seeder
             'nama_perusahaan' => 'Toko Usaha Baru',
             'alamat' => 'Jl Pasar Sebangkau no 13',
             'telepon' => '089534564221',
-            'tipe_nota' => 1,
+            // 'tipe_nota' => 1,
             'path_logo' => '/img/logo_cart.png'
         ]);
     }
