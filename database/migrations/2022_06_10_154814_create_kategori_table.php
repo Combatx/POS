@@ -13,11 +13,11 @@ class CreateKategoriTable extends Migration
      */
     public function up()
     {
-        // Schema::create('kategori', function (Blueprint $table) {
-        //     $table->increments('id_kategori');
-        //     $table->string('nama')->unique();
-        //     $table->timestamps();
-        // });
+        Schema::create('kategori', function (Blueprint $table) {
+            $table->increments('id_kategori');
+            $table->string('nama')->unique();
+            $table->timestamps();
+        });
     }
 
     /**
