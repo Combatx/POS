@@ -102,6 +102,9 @@ Route::group(['middleware' => ['auth', 'role:admin,kasir']], function () {
     Route::get('retur/cekretur/{kode}', [ReturController::class, 'cekretur'])->name('retur.cekretur');
     Route::get('retur/data', [ReturController::class, 'data'])->name('retur.data');
     Route::resource('retur', ReturController::class)->except('create', 'index', 'destroy');
+
+    Route::get('/stok', [ProdukController::class, 'stok'])->name('stok');
+    Route::get('/datastok', [ProdukController::class, 'datastok'])->name('datastok');
 });
 
 // admin
@@ -167,9 +170,6 @@ Route::group(['middleware' => ['auth', 'role:gudang']], function () {
 Route::group(['middleware' => ['auth', 'role:kasir']], function () {
 
     Route::resource('/pelanggan', PelangganController::class)->except('index');
-
-    Route::get('/stok', [ProdukController::class, 'stok'])->name('stok');
-    Route::get('/datastok', [ProdukController::class, 'datastok'])->name('datastok');
 
     Route::get('transaksi/baru', [PenjualanController::class, 'create'])->name('transaksi.baru');
     Route::post('transaksi/simpan', [PenjualanController::class, 'store'])->name('transaksi.simpan');
