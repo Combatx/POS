@@ -1,4 +1,28 @@
-Laravel 8, datatables, jquery, ajax, custom middleware role
+Laravel 8, datatables, jquery, ajax, mysql, custom middleware role
+
+Role :
+- Owner
+- Kasir
+- Gudang
+
+Beberapa FItur :
+- Manajemen User
+- Manajemen Produk
+- Manajemen Satuan
+- Manajemen Kategori
+- Manajemen Produk
+- Manajemen Supplier
+- Manajemen Pelanggan
+- Manajemen Stok
+- Manajemen Pembelian
+- Manajemen Barang Keluar
+- Manajemen Penjualan
+- Manajemen Pengiriman
+- Manajemen Laporan Pendapatan
+- Manajemen Laporan Lainya
+- Manajemen Setting
+- Manajemen Profil
+
 
 Penggunaan Aplikasi
 1. clone project aplikasi yang berada pada folder Project Tugas Akhir <br/>
@@ -28,3 +52,4 @@ Penggunaan Aplikasi
 13. login dengan akun admin yaitu username ridho dan passsword 12345678 <br/>
 14. user dapat login dengan role lain, login dengan akun admin, lalu buat akun dengan role kasir atau gudang pada menu user dan login dengan akun tersebut <br/>
 ![image](https://user-images.githubusercontent.com/72261786/191933123-41a2aa67-465f-45a9-a791-d8f0ff434e2f.png) <br/>
+
