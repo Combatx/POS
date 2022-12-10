@@ -1,3 +1,4 @@
+POS Toko Usaha Baru Pemangkat
 Laravel 8, datatables, jquery, ajax, mysql, custom middleware role
 
 Role :
