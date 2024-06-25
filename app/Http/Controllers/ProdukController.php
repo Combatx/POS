@@ -9,6 +9,7 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\DB;
 
 class ProdukController extends Controller
 {
@@ -84,70 +85,77 @@ class ProdukController extends Controller
      */
     public function store(Request $request)
     {
-        if ($request->cek_kode == 'manual') {
-            $validator = Validator::make($request->all(), [
-                'kode_barang' => 'required|min:2|unique:produk,kode_barang',
-                'nama_barang' => 'required|min:2|unique:produk,nama_barang',
-                'harga_beli' => 'required|min:2',
-                'harga_jual' => 'required|min:2',
-                'id_kategori' => 'required||numeric',
-                'id_satuan' => 'required|numeric',
-            ]);
+        try {
+            DB::beginTransaction();
+            if ($request->cek_kode == 'manual') {
+                $validator = Validator::make($request->all(), [
+                    'kode_barang' => 'required|min:2|unique:produk,kode_barang',
+                    'nama_barang' => 'required|min:2|unique:produk,nama_barang',
+                    'harga_beli' => 'required|min:2',
+                    'harga_jual' => 'required|min:2',
+                    'id_kategori' => 'required||numeric',
+                    'id_satuan' => 'required|numeric',
+                ]);
 
 
 
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
+                if ($validator->fails()) {
+                    return response()->json(['errors' => $validator->errors()], 422);
+                }
+
+
+                $data = $request->all();
+                $data['harga_beli'] = str_replace('.', '', $request->harga_beli);
+                $data['harga_jual'] = str_replace('.', '', $request->harga_jual);
+                $produk = Produk::create([
+                    'kode_barang' => $request->kode_barang,
+                    'nama_barang' => $request->nama_barang,
+                    'harga_beli' => str_replace('.', '', $request->harga_beli),
+                    'harga_jual' => str_replace('.', '', $request->harga_jual),
+                    'id_kategori' => $request->id_kategori,
+                    'id_satuan' => $request->id_satuan,
+                ]);
+                //$kodeBarang = Kategori::where('id_kategori', $produk->id_kategori)->value('kode_kategori') . $produk->id_produk;
+                return response()->json(['data' => $produk, 'message' => 'Produk berhasil ditambahkan!', 'type' => 'success']);
+            } elseif ($request->cek_kode == 'otomatis') {
+                $validator = Validator::make($request->all(), [
+                    //'kode_barang' => 'required|min:2|unique:produk,kode_barang',
+                    'nama_barang' => 'required|min:2|unique:produk,nama_barang',
+                    'harga_beli' => 'required|min:2',
+                    'harga_jual' => 'required|min:2',
+                    'id_kategori' => 'required||numeric',
+                    'id_satuan' => 'required|numeric',
+                ]);
+
+
+
+                if ($validator->fails()) {
+                    return response()->json(['errors' => $validator->errors()], 422);
+                }
+
+
+                $data = $request->all();
+                $data['harga_beli'] = str_replace('.', '', $request->harga_beli);
+                $data['harga_jual'] = str_replace('.', '', $request->harga_jual);
+                $produk = Produk::create([
+                    'nama_barang' => $request->nama_barang,
+                    'harga_beli' => str_replace('.', '', $request->harga_beli),
+                    'harga_jual' => str_replace('.', '', $request->harga_jual),
+                    'id_kategori' => $request->id_kategori,
+                    'id_satuan' => $request->id_satuan,
+                ]);
+                //$kodeBarang = Kategori::where('id_kategori', $produk->id_kategori)->value('kode_kategori') . $produk->id_produk;
+                $kodelast = Produk::where('id_kategori', $produk->id_kategori)->orderBy('id_produk', 'desc')->skip(1)->value('kode_barang') ?? 0;
+                $pisah = preg_replace('/[^0-9]/', '', $kodelast);
+                $kodeBarang = Kategori::where('id_kategori', $produk->id_kategori)->value('kode_kategori') . ($pisah + 1);
+                $updateKode = Produk::where('id_produk', $produk->id_produk)
+                    ->update(['kode_barang' =>  $kodeBarang]);
+                return response()->json(['data' => $produk, 'message' => 'Produk berhasil ditambahkan!', 'type' => 'success']);
             }
-
-
-            $data = $request->all();
-            $data['harga_beli'] = str_replace('.', '', $request->harga_beli);
-            $data['harga_jual'] = str_replace('.', '', $request->harga_jual);
-            $produk = Produk::create([
-                'kode_barang' => $request->kode_barang,
-                'nama_barang' => $request->nama_barang,
-                'harga_beli' => str_replace('.', '', $request->harga_beli),
-                'harga_jual' => str_replace('.', '', $request->harga_jual),
-                'id_kategori' => $request->id_kategori,
-                'id_satuan' => $request->id_satuan,
-            ]);
-            //$kodeBarang = Kategori::where('id_kategori', $produk->id_kategori)->value('kode_kategori') . $produk->id_produk;
-            return response()->json(['data' => $produk, 'message' => 'Produk berhasil ditambahkan!', 'type' => 'success']);
-        } elseif ($request->cek_kode == 'otomatis') {
-            $validator = Validator::make($request->all(), [
-                //'kode_barang' => 'required|min:2|unique:produk,kode_barang',
-                'nama_barang' => 'required|min:2|unique:produk,nama_barang',
-                'harga_beli' => 'required|min:2',
-                'harga_jual' => 'required|min:2',
-                'id_kategori' => 'required||numeric',
-                'id_satuan' => 'required|numeric',
-            ]);
-
-
-
-            if ($validator->fails()) {
-                return response()->json(['errors' => $validator->errors()], 422);
-            }
-
-
-            $data = $request->all();
-            $data['harga_beli'] = str_replace('.', '', $request->harga_beli);
-            $data['harga_jual'] = str_replace('.', '', $request->harga_jual);
-            $produk = Produk::create([
-                'nama_barang' => $request->nama_barang,
-                'harga_beli' => str_replace('.', '', $request->harga_beli),
-                'harga_jual' => str_replace('.', '', $request->harga_jual),
-                'id_kategori' => $request->id_kategori,
-                'id_satuan' => $request->id_satuan,
-            ]);
-            //$kodeBarang = Kategori::where('id_kategori', $produk->id_kategori)->value('kode_kategori') . $produk->id_produk;
-            $kodelast = Produk::where('id_kategori', $produk->id_kategori)->orderBy('id_produk', 'desc')->skip(1)->value('kode_barang') ?? 0;
-            $pisah = preg_replace('/[^0-9]/', '', $kodelast);
-            $kodeBarang = Kategori::where('id_kategori', $produk->id_kategori)->value('kode_kategori') . ($pisah + 1);
-            $updateKode = Produk::where('id_produk', $produk->id_produk)
-                ->update(['kode_barang' =>  $kodeBarang]);
-            return response()->json(['data' => $produk, 'message' => 'Produk berhasil ditambahkan!', 'type' => 'success']);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['data' => null, 'message' => 'Gagal Menyimpan Data!'], 500);
         }
     }
 

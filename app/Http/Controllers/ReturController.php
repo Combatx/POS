@@ -9,6 +9,7 @@ use App\Models\Retur;
 use App\Models\ReturDetail;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use phpDocumentor\Reflection\DocBlock\Tags\Return_;
 
 class ReturController extends Controller
@@ -77,42 +78,49 @@ class ReturController extends Controller
     {
         // return $request;
 
-        $diskon = str_replace('.', '', $request->diskon);
-        $retur = Retur::findOrFail($request->id_retur);
-        $retur->total_item = $request->total_item;
-        $retur->total_harga = $request->total;
-        $retur->kembalian = $request->kembalian;
-        $retur->keterangan = $request->keterangan;
-        $retur->update();
+        try {
+            DB::beginTransaction();
+            $diskon = str_replace('.', '', $request->diskon);
+            $retur = Retur::findOrFail($request->id_retur);
+            $retur->total_item = $request->total_item;
+            $retur->total_harga = $request->total;
+            $retur->kembalian = $request->kembalian;
+            $retur->keterangan = $request->keterangan;
+            $retur->update();
 
-        // $penjualan_detail = PenjualanDetail::where('id_penjualan', $retur->id_penjualan)->get();
-        // foreach ($penjualan_detail as $item) {
-        //     $produk = Produk::find($item->id_produk);
-        //     $produk->stok -= $item->jumlah;
-        //     $produk->update();
-        // }
+            // $penjualan_detail = PenjualanDetail::where('id_penjualan', $retur->id_penjualan)->get();
+            // foreach ($penjualan_detail as $item) {
+            //     $produk = Produk::find($item->id_produk);
+            //     $produk->stok -= $item->jumlah;
+            //     $produk->update();
+            // }
 
-        $detail = ReturDetail::where('id_retur', $retur->id_retur)->get();
+            $detail = ReturDetail::where('id_retur', $retur->id_retur)->get();
 
-        foreach ($detail as $item) {
-            $produk = Produk::find($item->id_produk);
-            $produk->stok += ($item->jumlah_lama - $item->jumlah);
-            $produk->update();
-        }
-        $update_penjualan = Penjualan::where('id_penjualan', $retur->id_penjualan)->update([
-            'retur' => 'Ya'
-        ]);
-        $retur_kosong = Retur::where('total_item', '=', 0)
-            ->where('total_harga', '=', 0)
-            ->where('total_item', '=', 0)
-            ->get();
-        if ($retur_kosong->count() != 0) {
-            foreach ($retur_kosong as $item) {
-                $delete_detail = ReturDetail::where('id_retur', $item->id_retur)->delete();
-                $delete_barang_keluar =  Retur::where('id_retur', $item->id_retur)->delete();
+            foreach ($detail as $item) {
+                $produk = Produk::find($item->id_produk);
+                $produk->stok += ($item->jumlah_lama - $item->jumlah);
+                $produk->update();
             }
+            $update_penjualan = Penjualan::where('id_penjualan', $retur->id_penjualan)->update([
+                'retur' => 'Ya'
+            ]);
+            $retur_kosong = Retur::where('total_item', '=', 0)
+                ->where('total_harga', '=', 0)
+                ->where('total_item', '=', 0)
+                ->get();
+            if ($retur_kosong->count() != 0) {
+                foreach ($retur_kosong as $item) {
+                    $delete_detail = ReturDetail::where('id_retur', $item->id_retur)->delete();
+                    $delete_barang_keluar =  Retur::where('id_retur', $item->id_retur)->delete();
+                }
+            }
+            return redirect()->route('retur.index');
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['data' => null, 'message' => 'Gagal Menyimpan Data!'], 500);
         }
-        return redirect()->route('retur.index');
     }
 
 
@@ -166,28 +174,34 @@ class ReturController extends Controller
 
     public function destroy($id)
     {
-        $retur = Retur::find($id);
-        $detail = ReturDetail::where('id_retur', $retur->id_retur)->get();
-        foreach ($detail as $item) {
-            $produk = Produk::find($item->id_produk);
-            $produk->stok -= $item->jumlah;
-            $produk->update();
-            $item->delete();
+        try {
+            $retur = Retur::find($id);
+            $detail = ReturDetail::where('id_retur', $retur->id_retur)->get();
+            foreach ($detail as $item) {
+                $produk = Produk::find($item->id_produk);
+                $produk->stok -= $item->jumlah;
+                $produk->update();
+                $item->delete();
+            }
+
+            $penjualan_detail = PenjualanDetail::where('id_penjualan', $retur->id_penjualan)->get();
+            foreach ($penjualan_detail as $item) {
+                $produk = Produk::find($item->id_produk);
+                $produk->stok += $item->jumlah;
+                $produk->update();
+            }
+            $penjualan = Penjualan::where('id_penjualan', $retur->id_penjualan)
+                ->update([
+                    'retur' => 'Tidak',
+                ]);
+
+            $retur->delete();
+
+            return response(null, 204);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['data' => null, 'message' => 'Gagal Menyimpan Data!'], 500);
         }
-
-        $penjualan_detail = PenjualanDetail::where('id_penjualan', $retur->id_penjualan)->get();
-        foreach ($penjualan_detail as $item) {
-            $produk = Produk::find($item->id_produk);
-            $produk->stok += $item->jumlah;
-            $produk->update();
-        }
-        $penjualan = Penjualan::where('id_penjualan', $retur->id_penjualan)
-            ->update([
-                'retur' => 'Tidak',
-            ]);
-
-        $retur->delete();
-
-        return response(null, 204);
     }
 }

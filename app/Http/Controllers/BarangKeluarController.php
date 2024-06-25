@@ -7,6 +7,7 @@ use App\Models\BarangKeluarDetail;
 use App\Models\Produk;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BarangKeluarController extends Controller
 {
@@ -75,32 +76,40 @@ class BarangKeluarController extends Controller
     public function store(Request $request)
     {
 
-        $diskon = str_replace('.', '', $request->diskon);
-        $barang_keluar = BarangKeluar::findOrFail($request->id_barang_keluar);
-        $barang_keluar->total_item = $request->total_item;
-        $barang_keluar->total_harga = $request->total;
-        $barang_keluar->keterangan = $request->keterangan;
-        $barang_keluar->update();
+        DB::beginTransaction();
 
-        $detail = BarangKeluarDetail::where('id_barang_keluar', $barang_keluar->id_barang_keluar)->get();
+        try {
+            $diskon = str_replace('.', '', $request->diskon);
+            $barang_keluar = BarangKeluar::findOrFail($request->id_barang_keluar);
+            $barang_keluar->total_item = $request->total_item;
+            $barang_keluar->total_harga = $request->total;
+            $barang_keluar->keterangan = $request->keterangan;
+            $barang_keluar->update();
 
-        foreach ($detail as $item) {
-            $produk = Produk::find($item->id_produk);
-            $produk->stok -= $item->jumlah;
-            $produk->update();
-        }
+            $detail = BarangKeluarDetail::where('id_barang_keluar', $barang_keluar->id_barang_keluar)->get();
 
-        $barang_keluar_kosong = BarangKeluar::where('total_item', '=', 0)
-            ->where('total_harga', '=', 0)
-            ->where('total_item', '=', 0)
-            ->get();
-        if ($barang_keluar_kosong->count() != 0) {
-            foreach ($barang_keluar_kosong as $item) {
-                $delete_detail = BarangKeluarDetail::where('id_barang_keluar', $item->id_barang_keluar)->delete();
-                $delete_barang_keluar =  BarangKeluar::where('id_barang_keluar', $item->id_barang_keluar)->delete();
+            foreach ($detail as $item) {
+                $produk = Produk::find($item->id_produk);
+                $produk->stok -= $item->jumlah;
+                $produk->update();
             }
+
+            $barang_keluar_kosong = BarangKeluar::where('total_item', '=', 0)
+                ->where('total_harga', '=', 0)
+                ->where('total_item', '=', 0)
+                ->get();
+            if ($barang_keluar_kosong->count() != 0) {
+                foreach ($barang_keluar_kosong as $item) {
+                    $delete_detail = BarangKeluarDetail::where('id_barang_keluar', $item->id_barang_keluar)->delete();
+                    $delete_barang_keluar =  BarangKeluar::where('id_barang_keluar', $item->id_barang_keluar)->delete();
+                }
+            }
+            DB::commit();
+            return redirect()->route('barangkeluar.index');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['data' => null, 'message' => 'Gagal Menyimpan Data!'], 500);
         }
-        return redirect()->route('barangkeluar.index');
     }
 
     public function show($id)
@@ -131,17 +140,24 @@ class BarangKeluarController extends Controller
 
     public function destroy($id)
     {
-        $barangkeluar = BarangKeluar::find($id);
-        $detail = BarangKeluarDetail::where('id_barang_keluar', $barangkeluar->id_barang_keluar)->get();
-        foreach ($detail as $item) {
-            $produk = Produk::find($item->id_produk);
-            $produk->stok += $item->jumlah;
-            $produk->update();
-            $item->delete();
+        try {
+            DB::beginTransaction();
+            $barangkeluar = BarangKeluar::find($id);
+            $detail = BarangKeluarDetail::where('id_barang_keluar', $barangkeluar->id_barang_keluar)->get();
+            foreach ($detail as $item) {
+                $produk = Produk::find($item->id_produk);
+                $produk->stok += $item->jumlah;
+                $produk->update();
+                $item->delete();
+            }
+
+            $barangkeluar->delete();
+
+            DB::commit();
+            return response(null, 204);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['data' => null, 'message' => 'Gagal Menyimpan Data!'], 500);
         }
-
-        $barangkeluar->delete();
-
-        return response(null, 204);
     }
 }

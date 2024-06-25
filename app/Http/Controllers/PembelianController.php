@@ -8,6 +8,7 @@ use App\Models\Produk;
 use App\Models\Setting;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PembelianController extends Controller
 {
@@ -88,35 +89,43 @@ class PembelianController extends Controller
 
     public function store(Request $request)
     {
-        $diskon = str_replace('.', '', $request->diskon);
-        $pembelian = Pembelian::findOrFail($request->id_pembelian);
-        $pembelian->total_item = $request->total_item;
-        $pembelian->total_harga = $request->total;
-        $pembelian->diskon = $diskon;
-        $pembelian->bayar = $request->bayar;
-        $pembelian->id_supplier = $request->id_supplier;
-        $pembelian->update();
+        try {
 
-        $detail = PembelianDetail::where('id_pembelian', $pembelian->id_pembelian)->get();
+            DB::beginTransaction();
+            $diskon = str_replace('.', '', $request->diskon);
+            $pembelian = Pembelian::findOrFail($request->id_pembelian);
+            $pembelian->total_item = $request->total_item;
+            $pembelian->total_harga = $request->total;
+            $pembelian->diskon = $diskon;
+            $pembelian->bayar = $request->bayar;
+            $pembelian->id_supplier = $request->id_supplier;
+            $pembelian->update();
 
-        foreach ($detail as $item) {
-            $produk = Produk::find($item->id_produk);
-            $produk->stok += $item->jumlah;
-            $produk->update();
-        }
+            $detail = PembelianDetail::where('id_pembelian', $pembelian->id_pembelian)->get();
 
-        $pembeliankosong = Pembelian::where('total_item', '=', 0)
-            ->where('total_harga', '=', 0)
-            ->where('bayar', '=', 0)
-            ->get();
-        if ($pembeliankosong->count() != 0) {
-            foreach ($pembeliankosong as $item) {
-                $delete_detail = PembelianDetail::where('id_pembelian', $item->id_pembelian)->delete();
-                $delete_pembelian =  Pembelian::where('id_pembelian', $item->id_pembelian)->delete();
+            foreach ($detail as $item) {
+                $produk = Produk::find($item->id_produk);
+                $produk->stok += $item->jumlah;
+                $produk->update();
             }
-        }
 
-        return redirect()->route('pembelian.index');
+            $pembeliankosong = Pembelian::where('total_item', '=', 0)
+                ->where('total_harga', '=', 0)
+                ->where('bayar', '=', 0)
+                ->get();
+            if ($pembeliankosong->count() != 0) {
+                foreach ($pembeliankosong as $item) {
+                    $delete_detail = PembelianDetail::where('id_pembelian', $item->id_pembelian)->delete();
+                    $delete_pembelian =  Pembelian::where('id_pembelian', $item->id_pembelian)->delete();
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('pembelian.index');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['data' => null, 'message' => 'Gagal Menyimpan Data!'], 500);
+        }
     }
 
     public function show($id)
@@ -147,17 +156,26 @@ class PembelianController extends Controller
 
     public function destroy($id)
     {
-        $pembelian = Pembelian::find($id);
-        $detail = PembelianDetail::where('id_pembelian', $pembelian->id_pembelian)->get();
-        foreach ($detail as $item) {
-            $produk = Produk::find($item->id_produk);
-            $produk->stok -= $item->jumlah;
-            $produk->update();
-            $item->delete();
+        try {
+            DB::beginTransaction();
+            $pembelian = Pembelian::find($id);
+            $detail = PembelianDetail::where('id_pembelian', $pembelian->id_pembelian)->get();
+            foreach ($detail as $item) {
+                $produk = Produk::find($item->id_produk);
+                $produk->stok -= $item->jumlah;
+                $produk->update();
+                $item->delete();
+            }
+
+            $pembelian->delete();
+
+            DB::commit();
+            return response(null, 204);
+            //code...
+        } catch (\Throwable $th) {
+
+            DB::rollBack();
+            return response()->json(['data' => null, 'message' => 'Gagal Menyimpan Data!'], 500);
         }
-
-        $pembelian->delete();
-
-        return response(null, 204);
     }
 }

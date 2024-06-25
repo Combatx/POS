@@ -10,6 +10,7 @@ use App\Models\Retur;
 use App\Models\Setting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PenjualanController extends Controller
 {
@@ -116,79 +117,93 @@ class PenjualanController extends Controller
 
     public function store(Request $request)
     {
+        try {
+            DB::beginTransaction();
+            $diskon = str_replace('.', '', $request->diskon);
+            $diterima = str_replace('.', '', $request->diterima);
+            $penjualan = Penjualan::findOrFail($request->id_penjualan);
+            $penjualan->total_item = $request->total_item;
+            $penjualan->total_harga = $request->total;
+            $penjualan->diskon = $diskon;
+            $penjualan->bayar = $request->bayar;
+            $penjualan->diterima = $diterima;
+            $penjualan->id_pelanggan = $request->id_pelanggan;
+            $penjualan->update();
 
-        $diskon = str_replace('.', '', $request->diskon);
-        $diterima = str_replace('.', '', $request->diterima);
-        $penjualan = Penjualan::findOrFail($request->id_penjualan);
-        $penjualan->total_item = $request->total_item;
-        $penjualan->total_harga = $request->total;
-        $penjualan->diskon = $diskon;
-        $penjualan->bayar = $request->bayar;
-        $penjualan->diterima = $diterima;
-        $penjualan->id_pelanggan = $request->id_pelanggan;
-        $penjualan->update();
+            $detail = PenjualanDetail::where('id_penjualan', $penjualan->id_penjualan)->get();
 
-        $detail = PenjualanDetail::where('id_penjualan', $penjualan->id_penjualan)->get();
-
-        foreach ($detail as $item) {
-            $produk = Produk::find($item->id_produk);
-            $produk->stok -= $item->jumlah;
-            $produk->update();
-        }
-
-        $penjualan_pengiriman = PenjualanDetail::where('id_penjualan', $request->id_penjualan)->where('dikirim', 'ya')->get();
-
-        if ($penjualan_pengiriman->count() != 0) {
-            $pengiriman =  Pengiriman::create([
-                'id_penjualan' => $request->id_penjualan,
-                'status' => 'diantar',
-            ]);
-            // foreach ($detail as $item) {
-            //     $detailkirim = 
-            //     $produk->update();
-            // }
-
-            $detailkirim = PenjualanDetail::where('id_penjualan', $request->id_penjualan)
-                ->update([
-                    'id_pengiriman' => $pengiriman->id_pengiriman
-                ]);
-        }
-        $penjualankosong = Penjualan::where('total_item', '=', 0)
-            ->where('total_harga', '=', 0)
-            ->where('bayar', '=', 0)
-            ->get();
-
-        if ($penjualankosong->count() != 0) {
-            foreach ($penjualankosong as $item) {
-                $delete_detail = PenjualanDetail::where('id_penjualan', $item->id_penjualan)->delete();
-                $delete_penjualan =  Penjualan::where('id_penjualan', $item->id_penjualan)->delete();
+            foreach ($detail as $item) {
+                $produk = Produk::find($item->id_produk);
+                $produk->stok -= $item->jumlah;
+                $produk->update();
             }
+
+            $penjualan_pengiriman = PenjualanDetail::where('id_penjualan', $request->id_penjualan)->where('dikirim', 'ya')->get();
+
+            if ($penjualan_pengiriman->count() != 0) {
+                $pengiriman =  Pengiriman::create([
+                    'id_penjualan' => $request->id_penjualan,
+                    'status' => 'diantar',
+                ]);
+                // foreach ($detail as $item) {
+                //     $detailkirim = 
+                //     $produk->update();
+                // }
+
+                $detailkirim = PenjualanDetail::where('id_penjualan', $request->id_penjualan)
+                    ->update([
+                        'id_pengiriman' => $pengiriman->id_pengiriman
+                    ]);
+            }
+            $penjualankosong = Penjualan::where('total_item', '=', 0)
+                ->where('total_harga', '=', 0)
+                ->where('bayar', '=', 0)
+                ->get();
+
+            if ($penjualankosong->count() != 0) {
+                foreach ($penjualankosong as $item) {
+                    $delete_detail = PenjualanDetail::where('id_penjualan', $item->id_penjualan)->delete();
+                    $delete_penjualan =  Penjualan::where('id_penjualan', $item->id_penjualan)->delete();
+                }
+            }
+
+            DB::commit();
+            return redirect()->route('transaksi.selesai');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['data' => null, 'message' => 'Gagal Menyimpan Data!'], 500);
         }
-        return redirect()->route('transaksi.selesai');
     }
 
     public function destroy($id)
     {
-        $cek_kirim = Pengiriman::where('id_penjualan', $id)->count();
-        $cek_retur = Retur::where('id_penjualan', $id)->count();
-        if ($cek_kirim >= 1) {
-            return response()->json(['message' => 'Mohon Hapus Data Pengiriman Terlebih Dahulu Sesuai Dengan ID Faktur ' . $id, 'type' => 'error', 'cek' => 'fail'], 400);
-        }
-        if ($cek_retur >= 1) {
-            return response()->json(['message' => 'Mohon Hapus Data Retur Terlebih Dahulu Sesuai Dengan ID Faktur ' . $id, 'type' => 'error', 'cek' => 'fail'], 400);
-        }
-        $penjualan = Penjualan::find($id);
-        $detail = PenjualanDetail::where('id_penjualan', $penjualan->id_penjualan)->get();
-        foreach ($detail as $item) {
-            $produk = Produk::find($item->id_produk);
-            $produk->stok += $item->jumlah;
-            $produk->update();
-            $item->delete();
-        }
+        try {
+            DB::beginTransaction();
+            $cek_kirim = Pengiriman::where('id_penjualan', $id)->count();
+            $cek_retur = Retur::where('id_penjualan', $id)->count();
+            if ($cek_kirim >= 1) {
+                return response()->json(['message' => 'Mohon Hapus Data Pengiriman Terlebih Dahulu Sesuai Dengan ID Faktur ' . $id, 'type' => 'error', 'cek' => 'fail'], 400);
+            }
+            if ($cek_retur >= 1) {
+                return response()->json(['message' => 'Mohon Hapus Data Retur Terlebih Dahulu Sesuai Dengan ID Faktur ' . $id, 'type' => 'error', 'cek' => 'fail'], 400);
+            }
+            $penjualan = Penjualan::find($id);
+            $detail = PenjualanDetail::where('id_penjualan', $penjualan->id_penjualan)->get();
+            foreach ($detail as $item) {
+                $produk = Produk::find($item->id_produk);
+                $produk->stok += $item->jumlah;
+                $produk->update();
+                $item->delete();
+            }
 
-        $penjualan->delete();
+            $penjualan->delete();
 
-        return response(null, 204);
+            return response(null, 204);
+            DB::commit();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json(['data' => null, 'message' => 'Gagal Menyimpan Data!'], 500);
+        }
     }
 
     public function selesai()

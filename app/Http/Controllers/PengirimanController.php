@@ -9,6 +9,7 @@ use App\Models\Setting;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class PengirimanController extends Controller
@@ -142,13 +143,20 @@ class PengirimanController extends Controller
 
     public function destroy(Pengiriman $pengiriman)
     {
-        $penjualandetail = PenjualanDetail::where('id_pengiriman', $pengiriman->id_pengiriman)
-            ->update([
-                'id_pengiriman' => null,
-                'dikirim' => 'tidak',
-            ]);
-        $pengiriman->delete();
-        return response()->json(['data' => null, 'message' => 'Data Pengiriman Berhasil di Hapus']);
+        try {
+            DB::beginTransaction();
+            $penjualandetail = PenjualanDetail::where('id_pengiriman', $pengiriman->id_pengiriman)
+                ->update([
+                    'id_pengiriman' => null,
+                    'dikirim' => 'tidak',
+                ]);
+            $pengiriman->delete();
+            DB::commit();
+            return response()->json(['data' => null, 'message' => 'Data Pengiriman Berhasil di Hapus']);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            //throw $th;
+        }
     }
 
     public function printsj($id)
